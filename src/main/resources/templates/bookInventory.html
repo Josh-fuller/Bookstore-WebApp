@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Inventory</title>
+</head>
+<body>
+<h1 th:text="'Inventory #' + ${bookInventory.id}"></h1>
+
+<h2>Books:</h2>
+<ul>
+    <li th:each="book : ${bookInventory.books}">
+        <span th:text="${book.title}"></span> -
+        <span th:text="${book.genre}"></span> -
+        <span th:text="${book.price}"></span>
+    </li>
+</ul>
+
+<h3>Add a New Book</h3>
+<form th:action="@{'/bookInventories/' + ${bookInventory.id} + '/addBook'}"
+      method="post"
+      th:object="${book}">
+    <input type="text" th:field="*{title}" placeholder="Title" required>
+    <input type="text" th:field="*{genre}" placeholder="Genre" required>
+    <input type="text" th:field="*{price}" placeholder="Price" required>
+    <input type="text" th:field="*{isbn}" placeholder="ISBN" required>
+    <button type="submit">Add Book</button>
+</form>
+
+<a href="/bookInventories">Back to all inventories</a>
+</body>
+</html>

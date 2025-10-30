@@ -3,16 +3,17 @@ package org.example;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
 public class BookInventory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<BookInfo> books = new ArrayList<>();
 
     public BookInventory() {}
@@ -36,7 +37,8 @@ public class BookInventory {
     }
 
     public List<BookInfo> getBooks(){
-        return new ArrayList(books);
+        List<BookInfo> sortedBooks = new ArrayList<>(books);
+        sortedBooks.sort(Comparator.comparing(BookInfo::getBookTitle, String.CASE_INSENSITIVE_ORDER));
+        return sortedBooks;
     }
-
 }

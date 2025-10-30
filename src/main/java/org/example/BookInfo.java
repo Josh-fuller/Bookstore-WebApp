@@ -9,57 +9,88 @@ import jakarta.persistence.Id;
 public class BookInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id; // FOR PRIMARY KEY
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String bookName;
-    private String bookGenre;
-    private String bookPrice;
     private String bookISBN;
+    private String bookTitle;
+    private String bookGenres;
+    private String bookAuthor;
+    private String bookPublisher;
+    private String bookDescription;
+    private Double bookPrice;
+    private String bookCoverURL; // full URL or relative filename
 
-    //Maybe we add a additional String(s) for the authors name and a short text summary
+    // Constructors
+    public BookInfo() {}
 
-    //Not 100% sure why but this needs to be here to work or else IntelliJ complains
-    public BookInfo(){
-        //Class 'BookInfo' should have [public, protected] no-arg constructor
-    }
-
-    //Constructor
-    public BookInfo(String bookName, String bookGenre, String bookPrice, String bookISBN){
-        this.bookName = bookName;
-        this.bookGenre = bookGenre;
-        this.bookPrice = bookPrice;
+    public BookInfo(String bookTitle, String bookGenres, Double bookPrice, String bookISBN, String bookAuthor, String bookPublisher,
+                    String bookDescription, String bookCoverURL) {
         this.bookISBN = bookISBN;
+        this.bookTitle = bookTitle;
+        this.bookGenres = bookGenres;
+        this.bookAuthor = bookAuthor;
+        this.bookPublisher = bookPublisher;
+        this.bookDescription = bookDescription;
+        this.bookPrice = bookPrice;
+        this.bookCoverURL = bookCoverURL;
     }
 
     //ALL Getters
-    public String getBookName(){
-        return bookName;
-    }
-    public String getBookGenre(){
-        return bookGenre;
-    }
-    public String getBookPrice(){
-        return bookPrice;
-    }
     public String getBookISBN(){
         return bookISBN;
     }
+    public String getBookTitle(){
+        return bookTitle;
+    }
+    public String getBookGenres(){
+        return bookGenres;
+    }
+    public String getBookAuthor(){
+        return bookAuthor;
+    }
+    public String getBookName(){
+        return bookTitle;
+    }
+    public String getBookPublisher(){
+        return bookPublisher;
+    }
+    public String getBookDescription(){
+        return bookDescription;
+    }
+    public Double getBookPrice(){
+        return bookPrice;
+    }
+    public String getBookCoverURL(){
+        return bookCoverURL;
+    }
+    public Long getId(){ return id; }
 
     //ALL setters IDK if well need them
+    public void setBookISBN(String bookISBN){
+        this.bookISBN = bookISBN;
+    }
+    public void setBookTitle(String bookTitle){
+        this.bookTitle = bookTitle;
+    }
+    public void setBookGenres(String bookGenres){
+        this.bookGenres = bookGenres;
+    }
+    public void setBookAuthor(String bookAuthor){ this.bookAuthor = bookAuthor; }
     public void setBookName(String bookName){
-        this.bookName = bookName;
+        this.bookTitle = bookName;
     }
-
-    public void setGenre(String bookGenre){
-        this.bookGenre = bookGenre;
+    public void setBookPublisher(String bookPublisher){
+        this.bookPublisher = bookPublisher;
     }
-
-    public void setPrice(String bookPrice){
+    public void setBookDescription(String bookDescription){
+        this.bookDescription =  bookDescription;
+    }
+    public void setBookPrice(Double bookPrice){
         this.bookPrice = bookPrice;
     }
-    public void setISBN(String bookISBN){
-        this.bookISBN = bookISBN;
+    public void setBookCoverURL(String bookCoverURL){
+        this.bookCoverURL = bookCoverURL;
     }
 
 }

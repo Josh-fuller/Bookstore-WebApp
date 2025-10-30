@@ -9,9 +9,9 @@
 <h2>Books:</h2>
 <ul>
     <li th:each="book : ${bookInventory.books}">
-        <span th:text="${book.title}"></span> -
-        <span th:text="${book.genre}"></span> -
-        <span th:text="${book.price}"></span>
+        <span th:text="${book.getBookName()}"></span> -
+        <span th:text="${book.getBookGenres()}"></span> -
+        <span th:text="${book.getBookPrice()}"></span>
     </li>
 </ul>
 
@@ -19,10 +19,10 @@
 <form th:action="@{'/bookInventories/' + ${bookInventory.id} + '/addBook'}"
       method="post"
       th:object="${book}">
-    <input type="text" th:field="*{title}" placeholder="Title" required>
-    <input type="text" th:field="*{genre}" placeholder="Genre" required>
-    <input type="text" th:field="*{price}" placeholder="Price" required>
-    <input type="text" th:field="*{isbn}" placeholder="ISBN" required>
+    <input type="text" th:field="*{bookTitle}" placeholder="Title" required>
+    <input type="text" th:field="*{bookGenres}" placeholder="Genres" required>
+    <input type="text" th:field="*{bookPrice}" placeholder="Price" required>
+    <input type="text" th:field="*{bookISBN}" placeholder="ISBN" required>
     <button type="submit">Add Book</button>
 </form>
 

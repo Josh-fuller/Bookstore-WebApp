@@ -18,7 +18,7 @@
 
   <ul>
     <li th:each="book : ${inventory.books}">
-      <a th:href="@{'/inventory/' + ${inventory.id} + '/book/' + ${book.id}}">
+      <a th:href="@{'/inventory/' + ${inventory.id} + '/book/' + ${book.getId()}}">
         [[${book.bookName}]]
       </a>
     </li>

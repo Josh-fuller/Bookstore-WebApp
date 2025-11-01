@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Inventories</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Book Inventories</h1>
+
+<!-- List all book inventories -->
+<div th:if="${bookInventories.size() == 0}">
+  <p>No book inventories found.</p>
+</div>
+
+<div th:each="inventory : ${bookInventories}">
+  <h2>Inventory [[${inventory.id}]]</h2>
+
+  <ul>
+    <li th:each="book : ${inventory.books}">
+      <a th:href="@{'/bookInventories/' + ${inventory.id} + '/book/' + ${book.getId()}}">
+        [[${book.bookName}]]
+      </a>
+    </li>
+  </ul>
+</div>
+
+</body>
+</html>

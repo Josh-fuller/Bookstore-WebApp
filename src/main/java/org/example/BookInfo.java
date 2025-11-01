@@ -1,0 +1,96 @@
+package org.example;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class BookInfo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String bookISBN;
+    private String bookTitle;
+    private String bookGenres;
+    private String bookAuthor;
+    private String bookPublisher;
+    private String bookDescription;
+    private Double bookPrice;
+    private String bookCoverURL; // full URL or relative filename
+
+    // Constructors
+    public BookInfo() {}
+
+    public BookInfo(String bookTitle, String bookGenres, Double bookPrice, String bookISBN, String bookAuthor, String bookPublisher,
+                    String bookDescription, String bookCoverURL) {
+        this.bookISBN = bookISBN;
+        this.bookTitle = bookTitle;
+        this.bookGenres = bookGenres;
+        this.bookAuthor = bookAuthor;
+        this.bookPublisher = bookPublisher;
+        this.bookDescription = bookDescription;
+        this.bookPrice = bookPrice;
+        this.bookCoverURL = bookCoverURL;
+    }
+
+    //ALL Getters
+    public String getBookISBN(){
+        return bookISBN;
+    }
+    public String getBookTitle(){
+        return bookTitle;
+    }
+    public String getBookGenres(){
+        return bookGenres;
+    }
+    public String getBookAuthor(){
+        return bookAuthor;
+    }
+    public String getBookName(){
+        return bookTitle;
+    }
+    public String getBookPublisher(){
+        return bookPublisher;
+    }
+    public String getBookDescription(){
+        return bookDescription;
+    }
+    public Double getBookPrice(){
+        return bookPrice;
+    }
+    public String getBookCoverURL(){
+        return bookCoverURL;
+    }
+    public Long getId(){ return id; }
+
+    //ALL setters IDK if well need them
+    public void setBookISBN(String bookISBN){
+        this.bookISBN = bookISBN;
+    }
+    public void setBookTitle(String bookTitle){
+        this.bookTitle = bookTitle;
+    }
+    public void setBookGenres(String bookGenres){
+        this.bookGenres = bookGenres;
+    }
+    public void setBookAuthor(String bookAuthor){ this.bookAuthor = bookAuthor; }
+    public void setBookName(String bookName){
+        this.bookTitle = bookName;
+    }
+    public void setBookPublisher(String bookPublisher){
+        this.bookPublisher = bookPublisher;
+    }
+    public void setBookDescription(String bookDescription){
+        this.bookDescription =  bookDescription;
+    }
+    public void setBookPrice(Double bookPrice){
+        this.bookPrice = bookPrice;
+    }
+    public void setBookCoverURL(String bookCoverURL){
+        this.bookCoverURL = bookCoverURL;
+    }
+
+}

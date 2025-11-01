@@ -1,4 +1,5 @@
 package org.example;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -8,85 +9,101 @@ import java.util.Comparator;
 @Controller
 @RequestMapping("/bookInventories")
 /**
- * for rendering the thymeleaf templates
- * located in resoucres
+ * For rendering the Thymeleaf templates located in resources/templates.
  */
 public class BookInventoryView {
+
     private final BookInventoryRepository bookInventoryRepository;
     private final BookRepository bookRepository;
 
-    public BookInventoryView(BookInventoryRepository bookInventoryRepositoryRepository,BookRepository bookRepository) {
-        this.bookInventoryRepository = bookInventoryRepositoryRepository;
+    public BookInventoryView(BookInventoryRepository bookInventoryRepository, BookRepository bookRepository) {
+        this.bookInventoryRepository = bookInventoryRepository;
         this.bookRepository = bookRepository;
     }
 
     /**
+     * Displays a single inventory and its books.
      *
-     * retur
-     * @param id
-     * @param model
-     * @return
+     * @param id inventory ID
+     * @param model data passed to the template
+     * @return bookInventory.html view
      */
     @GetMapping("/{id}")
     public String viewBookInventory(@PathVariable Long id, Model model) {
         BookInventory bookInventory = bookInventoryRepository.findById(id).orElse(null);
-        model.addAttribute("bookInventory", bookInventory); // model is a container for data for sending between controller and view
+
+        if (bookInventory == null) {
+            return "redirect:/bookInventories"; // prevents NullPointer errors
+        }
+
+        bookInventory.getBooks().sort(Comparator.comparing(BookInfo::getBookTitle, String.CASE_INSENSITIVE_ORDER));
+
+        model.addAttribute("bookInventory", bookInventory);
         model.addAttribute("book", new BookInfo());
         return "bookInventory";
-        // look addressbook.html in templates
     }
 
+
     /**
-     * lists all addresses and searches for the html page
-     * @param model
-     * @return
+     * Lists all book inventories.
+     *
+     * @param model data passed to the template
+     * @return bookInventories.html view
      */
     @GetMapping
-    public String listBookInventory(Model model) {
-        model.addAttribute("bookInventory", bookInventoryRepository.findAll());
+    public String listBookInventories(Model model) {
+        model.addAttribute("bookInventories", bookInventoryRepository.findAll());
         return "bookInventories";
-        // look addressbook(s).html in templates
     }
 
     /**
-     * function to create/add books to bookInventory
-     * @param id
-     * @param newBook
-     * @return
+     * Adds a book to the specified inventory.
+     *
+     * @param id inventory ID
+     * @param newBook new book details from form
+     * @return redirect to same inventory page
      */
-    @PostMapping("/{id}/addBuddy")
-    public String addBook(@PathVariable Long id,
-                           @ModelAttribute BookInfo newBook) {
+    @PostMapping("/{id}/addBook")
+    public String addBookToInventory(@PathVariable Long id, @ModelAttribute BookInfo newBook) {
         BookInventory bookInventory = bookInventoryRepository.findById(id).orElse(null);
+
         if (bookInventory != null) {
-            bookInventory.addBook(newBook);
             bookRepository.save(newBook);
+            bookInventory.addBook(newBook);
             bookInventoryRepository.save(bookInventory);
         }
-        // redirect back to the same address book view
+
         return "redirect:/bookInventories/" + id;
     }
 
     /**
-     * method to render addressBook page
-     * @param id
-     * @param model
-     * @return
+     * Removes a book from an inventory.
+     *
+     * @param inventoryId inventory ID
+     * @param bookId book ID
+     * @return redirect to the inventory page
      */
-    @GetMapping("/addressbook/{id}")
-    public String getBookInventory(@PathVariable Long id, Model model) {
-        BookInventory bookInventory = bookInventoryRepository.findById(id).orElse(null);
-        model.addAttribute("bookInventory", bookInventory);
+    @GetMapping("/{inventoryId}/removeBook/{bookId}")
+    public String removeBookFromInventory(@PathVariable Long inventoryId, @PathVariable Long bookId) {
+        BookInventory inventory = bookInventoryRepository.findById(inventoryId).orElse(null);
+        BookInfo book = bookRepository.findById(bookId).orElse(null);
 
+        if (inventory != null && book != null) {
+            inventory.removeBook(book);
+            bookInventoryRepository.save(inventory);
+            bookRepository.delete(book);
+        }
 
-        model.addAttribute("buddy", new BookInfo()); //empty obj needed
-
-        return "bookInventory"; //template
+        return "redirect:/bookInventories/" + inventoryId;
     }
 
     /**
      * Displays details for a single book within an inventory.
-     * Example: /bookInventories/1/book/2
+     *
+     * @param inventoryId inventory ID
+     * @param bookId book ID
+     * @param model data passed to the template
+     * @return bookInventory.html view
      */
     @GetMapping("/{inventoryId}/book/{bookId}")
     public String viewBookDetails(@PathVariable Long inventoryId,
@@ -97,8 +114,6 @@ public class BookInventoryView {
 
         model.addAttribute("bookInventory", inventory);
         model.addAttribute("book", book);
-        return "bookInventory"; // templates/bookInventory.html
+        return "bookInventory";
     }
-
-
 }

@@ -9,16 +9,16 @@
 <h1>Book Inventories</h1>
 
 <!-- List all book inventories -->
-<div th:if="${bookInventory.size() == 0}">
+<div th:if="${bookInventories.size() == 0}">
   <p>No book inventories found.</p>
 </div>
 
-<div th:each="inventory : ${bookInventory}">
+<div th:each="inventory : ${bookInventories}">
   <h2>Inventory [[${inventory.id}]]</h2>
 
   <ul>
     <li th:each="book : ${inventory.books}">
-      <a th:href="@{'/inventory/' + ${inventory.id} + '/book/' + ${book.getId()}}">
+      <a th:href="@{'/bookInventories/' + ${inventory.id} + '/book/' + ${book.getId()}}">
         [[${book.bookName}]]
       </a>
     </li>

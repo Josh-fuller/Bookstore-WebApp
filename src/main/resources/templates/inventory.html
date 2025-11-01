@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Online Bookstore Inventory</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fafafa; margin: 40px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 80%; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<h1>Bookstore Inventory</h1>
+<h2>Add a New Book</h2>
+
+<form th:action="@{/addBook}" th:object="${newBook}" method="post">
+    <label>Name: <input type="text" th:field="*{bookName}" required/></label><br/>
+    <label>Genre: <input type="text" th:field="*{bookGenre}" required /></label><br/>
+    <label>Price: <input type="text" th:field="*{bookPrice}" required /></label><br/>
+    <label>ISBN: <input type="text" th:field="*{bookISBN}" required /></label><br/>
+    <button type="submit">Add Book</button>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Genre</th>
+        <th>Price</th>
+        <th>ISBN</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr th:each="book : ${books}">
+        <td th:text="${book.bookName}"></td>
+        <td th:text="${book.bookGenre}"></td>
+        <td th:text="${book.bookPrice}"></td>
+        <td th:text="${book.bookISBN}"></td>
+        <td>
+            <form th:action="@{/removeBook/{id}(id=${book.id})}" method="post" style="display:inline">
+                <button type="submit">Remove</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

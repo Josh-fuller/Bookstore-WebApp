@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 
-@Controller
-@RequestMapping("/bookInventories")
+//@Controller
+//@RequestMapping("/bookInventories")
 /**
  * For rendering the Thymeleaf templates located in resources/templates.
  */

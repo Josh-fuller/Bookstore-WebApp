@@ -16,7 +16,7 @@
 <h2>Add a New Book</h2>
 
 <form th:action="@{/addBook}" th:object="${newBook}" method="post">
-    <label>Name: <input type="text" th:field="*{bookName}" required/></label><br/>
+    <label>Name: <input type="text" th:field="*{bookTitle}" required/></label><br/>
     <label>Genre: <input type="text" th:field="*{bookGenre}" required /></label><br/>
     <label>Price: <input type="text" th:field="*{bookPrice}" required /></label><br/>
     <label>ISBN: <input type="text" th:field="*{bookISBN}" required /></label><br/>
@@ -35,7 +35,7 @@
     <tbody>
 
     <tr th:each="book : ${books}">
-        <td th:text="${book.bookName}"></td>
+        <td th:text="${book.bookTitle}"></td>
         <td th:text="${book.bookGenre}"></td>
         <td th:text="${book.bookPrice}"></td>
         <td th:text="${book.bookISBN}"></td>

@@ -14,11 +14,19 @@ public class BookController {
     @Autowired
     private BookInventoryRepository inventoryRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     @GetMapping("/")
     public String showInventory(Model model) {
         BookInventory inventory = inventoryRepository.findAll().stream()
                 .findFirst()
-                .orElse(new BookInventory());
+                .orElse(null);
+
+        if (inventory == null) {
+            inventory = new BookInventory();
+            inventoryRepository.save(inventory);
+        }
 
         model.addAttribute("inventory", inventory);
         model.addAttribute("books", inventory.getBooks());
@@ -32,7 +40,13 @@ public class BookController {
                 .findFirst()
                 .orElse(null);
 
-        if (inventory != null && book.getBookName() != null && !book.getBookName().isEmpty()) {
+        if (inventory == null) {
+            inventory = new BookInventory();
+            inventoryRepository.save(inventory);
+        }
+
+        if (inventory != null && book.getBookTitle() != null && !book.getBookTitle().isEmpty()) {
+            bookRepository.save(book);
             inventory.addBook(book);
             inventoryRepository.save(inventory);
         }
@@ -55,6 +69,7 @@ public class BookController {
             if (bookToRemove != null) {
                 inventory.removeBook(bookToRemove);
                 inventoryRepository.save(inventory);
+                bookRepository.deleteById(id);
             }
         }
 

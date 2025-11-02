@@ -15,7 +15,7 @@ public class BookInfo {
 
     private String bookISBN;
     private String bookTitle;
-    private String bookGenres;
+    private String bookGenre;
     private String bookAuthor;
     private String bookPublisher;
 
@@ -28,11 +28,11 @@ public class BookInfo {
     // Constructors
     public BookInfo() {}
 
-    public BookInfo(String bookTitle, String bookGenres, Double bookPrice, String bookISBN, String bookAuthor, String bookPublisher,
+    public BookInfo(String bookTitle, String bookGenre, Double bookPrice, String bookISBN, String bookAuthor, String bookPublisher,
                     String bookDescription, String bookCoverURL) {
         this.bookISBN = bookISBN;
         this.bookTitle = bookTitle;
-        this.bookGenres = bookGenres;
+        this.bookGenre = bookGenre;
         this.bookAuthor = bookAuthor;
         this.bookPublisher = bookPublisher;
         this.bookDescription = bookDescription;
@@ -47,14 +47,11 @@ public class BookInfo {
     public String getBookTitle(){
         return bookTitle;
     }
-    public String getBookGenres(){
-        return bookGenres;
+    public String getBookGenre(){
+        return bookGenre;
     }
     public String getBookAuthor(){
         return bookAuthor;
-    }
-    public String getBookName(){
-        return bookTitle;
     }
     public String getBookPublisher(){
         return bookPublisher;
@@ -77,13 +74,10 @@ public class BookInfo {
     public void setBookTitle(String bookTitle){
         this.bookTitle = bookTitle;
     }
-    public void setBookGenres(String bookGenres){
-        this.bookGenres = bookGenres;
+    public void setBookGenre(String bookGenre){
+        this.bookGenre = bookGenre;
     }
     public void setBookAuthor(String bookAuthor){ this.bookAuthor = bookAuthor; }
-    public void setBookName(String bookName){
-        this.bookTitle = bookName;
-    }
     public void setBookPublisher(String bookPublisher){
         this.bookPublisher = bookPublisher;
     }

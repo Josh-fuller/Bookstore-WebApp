@@ -17,7 +17,7 @@ class BookInfoTest {
                 "mystical world he never knew existed and closer to his own noble destiny.";
         BookInfo book = new BookInfo(
                 "Harry Potter and the Sorcerer's Stone",
-                "Fiction",
+                "Fantasy",
                 24.92,
                 "9780590353427",
                 "J.K. Rowling",
@@ -28,7 +28,7 @@ class BookInfoTest {
 
         assertNull(book.getId());
         assertEquals("Harry Potter and the Sorcerer's Stone", book.getBookTitle());
-        assertEquals("Fiction", book.getBookGenres());
+        assertEquals("Fantasy", book.getBookGenres());
         assertEquals(24.92, book.getBookPrice());
         assertEquals("9780590353427", book.getBookISBN());
         assertEquals("J.K. Rowling", book.getBookAuthor());
@@ -50,7 +50,7 @@ class BookInfoTest {
         BookInfo book = new BookInfo();
 
         book.setBookTitle("Harry Potter and the Sorcerer's Stone");
-        book.setBookGenres("Fiction");
+        book.setBookGenres("Fantasy");
         book.setBookPrice(24.92);
         book.setBookISBN("9780590353427");
         book.setBookAuthor("J.K. Rowling");
@@ -61,7 +61,7 @@ class BookInfoTest {
         // Then
         assertNull(book.getId());
         assertEquals("Harry Potter and the Sorcerer's Stone", book.getBookTitle());
-        assertEquals("Fiction", book.getBookGenres());
+        assertEquals("Fantasy", book.getBookGenres());
         assertEquals(24.92, book.getBookPrice());
         assertEquals("9780590353427", book.getBookISBN());
         assertEquals("J.K. Rowling", book.getBookAuthor());
@@ -72,7 +72,7 @@ class BookInfoTest {
 
     @Test
     void testBookNameAlias() {
-        BookInfo book = new BookInfo("Test Book", "Fiction", 20.00,
+        BookInfo book = new BookInfo("Test Book", "Fantasy", 20.00,
                 "123", "Author", "Publisher", "Desc", "URL");
 
         // When & Then

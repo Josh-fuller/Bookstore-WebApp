@@ -28,7 +28,7 @@ class BookInfoTest {
 
         assertNull(book.getId());
         assertEquals("Harry Potter and the Sorcerer's Stone", book.getBookTitle());
-        assertEquals("Fantasy", book.getBookGenres());
+        assertEquals("Fantasy", book.getBookGenre());
         assertEquals(24.92, book.getBookPrice());
         assertEquals("9780590353427", book.getBookISBN());
         assertEquals("J.K. Rowling", book.getBookAuthor());
@@ -50,7 +50,7 @@ class BookInfoTest {
         BookInfo book = new BookInfo();
 
         book.setBookTitle("Harry Potter and the Sorcerer's Stone");
-        book.setBookGenres("Fantasy");
+        book.setBookGenre("Fantasy");
         book.setBookPrice(24.92);
         book.setBookISBN("9780590353427");
         book.setBookAuthor("J.K. Rowling");
@@ -61,7 +61,7 @@ class BookInfoTest {
         // Then
         assertNull(book.getId());
         assertEquals("Harry Potter and the Sorcerer's Stone", book.getBookTitle());
-        assertEquals("Fantasy", book.getBookGenres());
+        assertEquals("Fantasy", book.getBookGenre());
         assertEquals(24.92, book.getBookPrice());
         assertEquals("9780590353427", book.getBookISBN());
         assertEquals("J.K. Rowling", book.getBookAuthor());
@@ -76,8 +76,8 @@ class BookInfoTest {
                 "123", "Author", "Publisher", "Desc", "URL");
 
         // When & Then
-        assertEquals("Test Book", book.getBookName());
-        book.setBookName("Test Book Part 2");
+        assertEquals("Test Book", book.getBookTitle());
+        book.setBookTitle("Test Book Part 2");
         assertEquals("Test Book Part 2", book.getBookTitle());
     }
 }

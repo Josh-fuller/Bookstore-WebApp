@@ -92,7 +92,7 @@ class BookRepositoryIntegrationTest {
         entityManager.persist(book2);
         entityManager.flush();
 
-        List<BookInfo> found = bookRepository.findByBookGenresContainingIgnoreCase("fantasy");
+        List<BookInfo> found = bookRepository.findByBookGenreContainingIgnoreCase("fantasy");
         assertEquals(2, found.size());
     }
 

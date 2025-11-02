@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
-@SpringBootApplication
+//@SpringBootApplication
 public class Main {
 
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
 
-    @Bean
+    //@Bean
     public CommandLineRunner demo(BookRepository bookInfoRepository, BookInventoryRepository bookInventoryRepository) {
         return (args) -> {
             // create a Book Inventory an add two book

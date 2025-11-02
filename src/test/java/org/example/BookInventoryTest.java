@@ -1,4 +1,4 @@
-package org.example.unit;
+package org.example;
 
 public class BookInventoryTest {
 }

@@ -1,6 +1,7 @@
 package org.example;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +18,10 @@ public class BookInfo {
     private String bookGenres;
     private String bookAuthor;
     private String bookPublisher;
+
+    @Column(columnDefinition = "TEXT")
     private String bookDescription;
+
     private Double bookPrice;
     private String bookCoverURL; // full URL or relative filename
 

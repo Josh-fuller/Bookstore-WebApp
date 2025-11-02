@@ -19,7 +19,7 @@ public class BookInfo {
     private String bookAuthor;
     private String bookPublisher;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 2000)
     private String bookDescription;
 
     private Double bookPrice;

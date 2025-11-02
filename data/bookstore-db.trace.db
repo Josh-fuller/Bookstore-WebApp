@@ -5528,3 +5528,6 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/camer/I
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 58 more
+2025-11-02 16:12:29.685343-05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "BOOK_DESCRIPTION CHARACTER VARYING(255)": "'Winning means fame and fortune. Losing means certain death. The Hunger Games ha... (837)"; SQL statement:
+insert into book_info (book_author,book_coverurl,book_description,book_genres,bookisbn,book_price,book_publisher,book_title,id) values (?,?,?,?,?,?,?,?,default) [22001-224]

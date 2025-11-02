@@ -25,6 +25,7 @@ class BookRepositoryIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        bookRepository.deleteAll();
         inventory = new BookInventory();
         String description1 = "Winning means fame and fortune. Losing means certain death. The Hunger Games have begun. In the ruins of a place once known as North America lies the nation of Panem, a shining Capitol surrounded by twelve outlying districts. The Capitol is harsh and cruel and keeps the districts in line by forcing them all to send one boy and one girl between the ages of twelve and eighteen to participate in the annual Hunger Games, a fight to the death on live TV. Sixteen-year-old Katniss Everdeen regards it as a death sentence when she steps forward to take her sister's place in the Games. But Katniss has been close to dead before-and survival, for her, is second nature. Without really meaning to, she becomes a contender. But if she is to win, she will have to start making choices that weigh survival against humanity and life against love.";
         String description2 = "Against all odds, Katniss Everdeen has won the Hunger Games. She and fellow District 12 tribute Peeta Mellark are miraculously still alive. Katniss should be relieved, happy even. After all, she has returned to her family and her longtime friend, Gale. Yet nothing is the way Katniss wishes it to be. Gale holds her at an icy distance. Peeta has turned his back on her completely. And there are whispers of a rebellion against the Capitol—a rebellion that Katniss and Peeta may have helped create. Much to her shock, Katniss has fueled an unrest that she's afraid she cannot stop. And what scares her even more is that she's not entirely convinced she should try. As time draws near for Katniss and Peeta to visit the districts on the Capitol's cruel Victory Tour, the stakes are higher than ever. If they can't prove, without a shadow of a doubt, that they are lost in their love for each other, the consequences will be horrifying. In Catching Fire, the second novel of the Hunger Games trilogy, Suzanne Collins continues the story of Katniss Everdeen, testing her more than ever before . . . and surprising readers at every turn.";
@@ -42,6 +43,9 @@ class BookRepositoryIntegrationTest {
                 "9780439023511", "Suzanne Collins",
                 "Scholastic", description3,
                 "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1586722918i/7260188.jpg");
+        bookRepository.save(book1);
+        bookRepository.save(book2);
+        bookRepository.save(book3);
 
     }
 

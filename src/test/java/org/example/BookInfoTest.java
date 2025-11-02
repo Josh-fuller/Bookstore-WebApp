@@ -1,7 +1,11 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+
 import static org.junit.jupiter.api.Assertions.*;
+@ContextConfiguration(classes = BookInfo.class)
 
 class BookInfoTest {
 

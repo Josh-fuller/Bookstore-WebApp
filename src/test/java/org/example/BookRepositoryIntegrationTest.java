@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@ContextConfiguration(classes = BookstoreApplication.class)
+@ActiveProfiles("test")
 class BookRepositoryIntegrationTest {
 
     @Autowired
@@ -87,17 +91,17 @@ class BookRepositoryIntegrationTest {
     }
 
     @Test
-    void findByBookGenresContainingIgnoreCase() {
+    void findByBookGenreContainingIgnoreCase() {
         entityManager.persist(book1);
         entityManager.persist(book2);
         entityManager.flush();
 
-        List<BookInfo> found = bookRepository.findByBookGenreContainingIgnoreCase("fantasy");
+        List<BookInfo> found = bookRepository.findByBookGenresContainingIgnoreCase("fantasy");
         assertEquals(2, found.size());
     }
 
     @Test
-    void whenFindByBookISBN_thenReturnBook() {
+    void whenFindByBookISBN() {
         entityManager.persist(book1);
         entityManager.flush();
 
@@ -107,7 +111,7 @@ class BookRepositoryIntegrationTest {
     }
 
     @Test
-    void whenFindByBookPriceBetween_thenReturnBooks() {
+    void whenFindByBookPriceBetween() {
         book1.setBookPrice(25.00);
         book2.setBookPrice(30.00);
         book3.setBookPrice(35.00);

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class BookInventoryViewIntegrationTest {
+@ActiveProfiles("test")
+class BookControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,53 +46,37 @@ class BookInventoryViewIntegrationTest {
     }
 
     @Test
-    void whenViewBookInventory_thenReturnInventoryPage() throws Exception {
-        mockMvc.perform(get("/bookInventories/{id}", inventory.getId()))
+    void whenViewHomePage_thenReturnInventoryPage() throws Exception {
+        mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("bookInventory"))
-                .andExpect(model().attributeExists("bookInventory"))
-                .andExpect(model().attributeExists("book"));
+                .andExpect(view().name("inventory"))
+                .andExpect(model().attributeExists("inventory"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("newBook"));
     }
 
     @Test
-    void whenViewNonExistingBookInventory_thenRedirectToList() throws Exception {
-        mockMvc.perform(get("/bookInventories/{id}", 999L))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/bookInventories"));
-    }
-
-    @Test
-    void whenListBookInventories_thenReturnInventoriesPage() throws Exception {
-        mockMvc.perform(get("/bookInventories"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bookInventories"))
-                .andExpect(model().attributeExists("bookInventories"));
-    }
-
-    @Test
-    void whenAddBookToInventory_thenRedirectToInventory() throws Exception {
-        mockMvc.perform(post("/bookInventories/{id}/addBook", inventory.getId())
-                        .param("bookTitle", "The Hunger Games")
+    void whenAddBook_thenRedirectToHome() throws Exception {
+        mockMvc.perform(post("/addBook")
+                        .param("bookTitle", "Catching Fire")
                         .param("bookGenres", "Fantasy")
                         .param("bookPrice", "19.99")
-                        .param("bookISBN", "9780439023481")
+                        .param("bookISBN", "9780439023498")
                         .param("bookAuthor", "Suzanne Collins")
                         .param("bookPublisher", "Scholastic")
-                        .param("bookDescription", "description")
-                        .param("bookCoverURL", "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1586722975i/2767052.jpg"))
+                        .param("bookDescription", "Second book in the series")
+                        .param("bookCoverURL", "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1586722941i/6148028.jpg"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/bookInventories/" + inventory.getId()));
+                .andExpect(redirectedUrl("/"));
     }
 
     @Test
-    void whenRemoveBookFromInventory_thenRedirectToInventory() throws Exception {
+    void whenRemoveBook_thenRedirectToHome() throws Exception {
         inventory.addBook(book);
         bookInventoryRepository.save(inventory);
 
-        
-        mockMvc.perform(get("/bookInventories/{inventoryId}/removeBook/{bookId}",
-                        inventory.getId(), book.getId()))
+        mockMvc.perform(post("/removeBook/{id}", book.getId()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/bookInventories/" + inventory.getId()));
+                .andExpect(redirectedUrl("/"));
     }
 }

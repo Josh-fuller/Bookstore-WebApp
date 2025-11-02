@@ -15,7 +15,7 @@ public class BookInfo {
 
     private String bookISBN;
     private String bookTitle;
-    private String bookGenre;
+    private String bookGenres;
     private String bookAuthor;
     private String bookPublisher;
 
@@ -32,7 +32,7 @@ public class BookInfo {
                     String bookDescription, String bookCoverURL) {
         this.bookISBN = bookISBN;
         this.bookTitle = bookTitle;
-        this.bookGenre = bookGenre;
+        this.bookGenres = bookGenre;
         this.bookAuthor = bookAuthor;
         this.bookPublisher = bookPublisher;
         this.bookDescription = bookDescription;
@@ -48,7 +48,7 @@ public class BookInfo {
         return bookTitle;
     }
     public String getBookGenre(){
-        return bookGenre;
+        return bookGenres;
     }
     public String getBookAuthor(){
         return bookAuthor;
@@ -75,7 +75,7 @@ public class BookInfo {
         this.bookTitle = bookTitle;
     }
     public void setBookGenre(String bookGenre){
-        this.bookGenre = bookGenre;
+        this.bookGenres = bookGenre;
     }
     public void setBookAuthor(String bookAuthor){ this.bookAuthor = bookAuthor; }
     public void setBookPublisher(String bookPublisher){

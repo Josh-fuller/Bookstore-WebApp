@@ -1,4 +1,3 @@
-// File: src/test/java/org/example/BookInventoryControllerIntegrationTest.java
 package org.example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -16,3 +16,6 @@ Features Implemented:
 - H2 Database (file-based, not in-memory) — data persists between runs
 - Automatically updates the table after each add/remove via full page reload
 - Project deployment on Azure
+
+
+<img width="771" height="466" alt="image" src="https://github.com/user-attachments/assets/b3443a31-97bd-47e7-87db-0a6f6ef6d4e4" />

@@ -17,5 +17,17 @@ Features Implemented:
 - Automatically updates the table after each add/remove via full page reload
 - Project deployment on Azure
 
+Milestone 2 feature plans:
+- Users and login (admin vs customers)
+- Shopping cart
+  - Checkout
+  - Changing inventory based on purchases
+- Seperate pages for book details
+- Book search (sort and filter)
 
+UML Diagram:
+<img width="1357" height="886" alt="image" src="https://github.com/user-attachments/assets/861aeee5-fea8-4927-bedd-6dfc5eff63ed" />
+
+
+ORM Diagram:
 <img width="771" height="466" alt="image" src="https://github.com/user-attachments/assets/b3443a31-97bd-47e7-87db-0a6f6ef6d4e4" />

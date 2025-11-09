@@ -1,6 +1,7 @@
 package org.example;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -23,4 +24,9 @@ public interface BookRepository extends JpaRepository<BookInfo, Long> {
 
     // Price filter min and max, min can be 0 and max can be large for single direction filter (below x or above y)
     List<BookInfo> findByBookPriceBetween(Double minPrice, Double maxPrice);
+
+    // *experimental*
+    @Query("SELECT DISTINCT b.bookGenre FROM BookInfo b")
+    List<String> findDistinctGenres();
+
 }

@@ -19,6 +19,7 @@ public class BookInventoryController {
                                    BookRepository bookRepository) {
         this.bookInventoryRepository = bookInventoryRepository;
         this.bookRepository = bookRepository;
+
     }
 
     /**
@@ -43,6 +44,7 @@ public class BookInventoryController {
         return bookInventoryRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+
     }
 
     /**

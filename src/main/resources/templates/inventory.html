@@ -12,40 +12,71 @@
     </style>
 </head>
 <body>
-<h1>Bookstore Inventory</h1>
-<h2>Add a New Book</h2>
+    <div>
+        <div th:if="${isLoggedIn}">
+            <span>Welcome, <strong th:text="${user.username}"></strong></span>
+            <span th:if="${isAdmin}" class="badge badge-admin">ADMIN</span>
+            <span th:unless="${isAdmin}" class="badge">CUSTOMER</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+        <div th:unless="${isLoggedIn}">
+            <a th:href="@{/login}">Login</a> | 
+            <a th:href="@{/register}">Register</a>
+        </div>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <h1>Bookstore Inventory</h1>
 
-<form th:action="@{/addBook}" th:object="${newBook}" method="post">
-    <label>Name: <input type="text" th:field="*{bookTitle}" required/></label><br/>
-    <label>Genre: <input type="text" th:field="*{bookGenre}" required /></label><br/>
-    <label>Price: <input type="text" th:field="*{bookPrice}" required /></label><br/>
-    <label>ISBN: <input type="text" th:field="*{bookISBN}" required /></label><br/>
-    <button type="submit">Add Book</button>
-</form>
+    <div th:if="${isAdmin}" class="admin-section">
+        <h2>Add a New Book</h2>
+        <form th:action="@{/addBook}" th:object="${newBook}" method="post">
+            <label>Name: <input type="text" th:field="*{bookTitle}" required/></label>
+            <label>Genre: <input type="text" th:field="*{bookGenre}" required /></label>
+            <label>Price: <input type="text" th:field="*{bookPrice}" required /></label>
+            <label>ISBN: <input type="text" th:field="*{bookISBN}" required /></label>
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
 
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Genre</th>
-        <th>Price</th>
-        <th>ISBN</th>
-    </tr>
-    </thead>
-    <tbody>
+    <!-- Info boxes for non-admin users -->
+    <div th:unless="${isLoggedIn}" class="info-box">
+        Browse our collection below. <a th:href="@{/login}">Login</a> to purchase books!
+    </div>
 
-    <tr th:each="book : ${books}">
-        <td th:text="${book.bookTitle}"></td>
-        <td th:text="${book.bookGenre}"></td>
-        <td th:text="${book.bookPrice}"></td>
-        <td th:text="${book.bookISBN}"></td>
-        <td>
-            <form th:action="@{/removeBook/{id}(id=${book.id})}" method="post" style="display:inline">
-                <button type="submit">Remove</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <div th:if="${isLoggedIn and !isAdmin}" class="info-box">
+        Browse our collection below. Contact an administrator to add new books.
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Genre</th>
+                <th>Price</th>
+                <th>ISBN</th>
+                <th th:if="${isAdmin}">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${books.isEmpty()}">
+                <td th:colspan="${isAdmin ? 5 : 4}" style="text-align: center;">
+                    No books available yet.
+                </td>
+            </tr>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.bookTitle}"></td>
+                <td th:text="${book.bookGenre}"></td>
+                <td th:text="${book.bookPrice}"></td>
+                <td th:text="${book.bookISBN}"></td>
+                <td th:if="${isAdmin}">
+                    <form th:action="@{/removeBook/{id}(id=${book.id})}" method="post" style="display:inline">
+                        <button type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package org.example;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +19,7 @@ public class BookController {
     private BookRepository bookRepository;
 
     @GetMapping("/")
-    public String showInventory(Model model) {
+    public String showInventory(Model model, HttpSession session) {
         BookInventory inventory = inventoryRepository.findAll().stream()
                 .findFirst()
                 .orElse(null);
@@ -28,14 +29,24 @@ public class BookController {
             inventoryRepository.save(inventory);
         }
 
+        User user = (User) session.getAttribute("user");
+        model.addAttribute("user", user);
+        model.addAttribute("isLoggedIn", user != null);
+        model.addAttribute("isAdmin", user != null && user.isAdmin());
+
         model.addAttribute("inventory", inventory);
         model.addAttribute("books", inventory.getBooks());
-        model.addAttribute("newBook", new BookInfo()); // <- Add this
+        model.addAttribute("newBook", new BookInfo());
         return "inventory";
     }
 
     @PostMapping("/addBook")
-    public String addBook(@ModelAttribute("newBook") BookInfo book) {
+    public String addBook(@ModelAttribute("newBook") BookInfo book, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.isAdmin()) {
+            return "redirect:/login";
+        }
+
         BookInventory inventory = inventoryRepository.findAll().stream()
                 .findFirst()
                 .orElse(null);
@@ -55,7 +66,12 @@ public class BookController {
     }
 
     @PostMapping("/removeBook/{id}")
-    public String removeBook(@PathVariable Long id) {
+    public String removeBook(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.isAdmin()) {
+            return "redirect:/login";
+        }
+
         BookInventory inventory = inventoryRepository.findAll().stream()
                 .findFirst()
                 .orElse(null);

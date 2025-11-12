@@ -64,7 +64,7 @@ public class UserService {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
             // Perform the hash computation
-            byte[] encodedhash = digest.digest(input.getBytes());
+            byte[] encodedhash = digest.digest(password.getBytes());
 
             // Convert byte array into a hexadecimal string
             StringBuilder hexString = new StringBuilder();

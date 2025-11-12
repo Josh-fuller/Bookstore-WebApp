@@ -38,6 +38,11 @@ public class BookController {
         model.addAttribute("newBook", new BookInfo());
         model.addAttribute("genres", getDistinctGenres());
 
+        model.addAttribute("title", "");
+        model.addAttribute("minPrice", null);
+        model.addAttribute("maxPrice", null);
+        model.addAttribute("genre", "");
+
         System.out.println("Loaded " + allBooks.size() + " books (sorted by title).");
         return "inventory";
     }
@@ -98,7 +103,7 @@ public class BookController {
     public String searchBooks(@RequestParam(required = false) String title,
                               @RequestParam(required = false) Double minPrice,
                               @RequestParam(required = false) Double maxPrice,
-                              @RequestParam(required = false) String genre,
+                              @RequestParam(required = false) String genre, HttpSession session,
                               Model model) {
 
         List<BookInfo> allBooks = bookRepository.findAll();
@@ -131,11 +136,25 @@ public class BookController {
                 .orElse(null);
 
         // Alphabetical order for search results
+        User user = (User) session.getAttribute("user");
+        boolean loggedIn = (user != null);
+        boolean admin = loggedIn && user.isAdmin();
+
+        model.addAttribute("user", user);
+        model.addAttribute("isLoggedIn", loggedIn);
+        model.addAttribute("isAdmin", admin);
+
         filtered = new ArrayList<>(filtered).stream().sorted(Comparator.comparing(BookInfo::getBookTitle, String.CASE_INSENSITIVE_ORDER)).toList();
         model.addAttribute("inventory", inventory);
         model.addAttribute("books", filtered);
         model.addAttribute("genres", getDistinctGenres());
         model.addAttribute("newBook", new BookInfo());
+
+        model.addAttribute("title", title);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("genre", genre);
+
 
         // ✅ Debugging
         System.out.println("Search Request -> title=" + title + ", genre=" + genre +

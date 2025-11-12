@@ -30,7 +30,7 @@
                 <a class="btn btn-sm btn-outline-light" th:href="@{/register}">Register</a>
             </div>
 
-            <button class="btn btn-success"
+            <button th:if="${isAdmin}" class="btn btn-success"
                     onclick="document.getElementById('add-book').scrollIntoView({behavior:'smooth'})">
                 + Add New Book
             </button>
@@ -40,11 +40,11 @@
 
 <!-- Info boxes for non-admin users -->
 <div th:unless="${isLoggedIn}" class="info-box">
-    Browse our collection below. <a th:href="@{/login}">Login</a> to purchase books!
+    <a th:href="@{/login}">Login</a> to purchase books!
 </div>
 
 <div th:if="${isLoggedIn and !isAdmin}" class="info-box">
-    Browse our collection below. Contact an administrator to add new books.
+    Contact an administrator to add new books.
 </div>
 
 

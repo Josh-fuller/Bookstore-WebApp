@@ -26,7 +26,7 @@ public interface BookRepository extends JpaRepository<BookInfo, Long> {
     List<BookInfo> findByBookPriceBetween(Double minPrice, Double maxPrice);
 
     // *experimental*
-    @Query("SELECT DISTINCT b.bookGenre FROM BookInfo b")
+    @Query("SELECT DISTINCT b.bookGenres FROM BookInfo b")
     List<String> findDistinctGenres();
 
 }

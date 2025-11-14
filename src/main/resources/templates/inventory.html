@@ -30,6 +30,12 @@
                 <a class="btn btn-sm btn-outline-light" th:href="@{/register}">Register</a>
             </div>
 
+            <a th:if="${isLoggedIn and !isAdmin}"
+               class="btn btn-outline-light"
+               th:href="@{/cart}">
+                View Cart
+            </a>
+
             <button th:if="${isAdmin}" class="btn btn-success"
                     onclick="document.getElementById('add-book').scrollIntoView({behavior:'smooth'})">
                 + Add New Book
@@ -76,7 +82,9 @@
             <thead class="table-light">
             <tr>
                 <th>Cover</th><th>Title</th><th>Author</th><th>Genre</th>
-                <th>Price</th><th>Description</th><th></th>
+                <th>Price</th><th>Description</th>
+                <th th:if="${isAdmin}">Admin</th>
+                <th th:if="${isLoggedIn and !isAdmin}">Cart</th>
             </tr>
             </thead>
             <tbody>
@@ -99,6 +107,12 @@
                 <td th:if="${isAdmin}">
                     <form th:action="@{/removeBook/{id}(id=${book.id})}" method="post">
                         <button class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                </td>
+                <!-- Customer add to cart -->
+                <td th:if="${isLoggedIn and !isAdmin}">
+                    <form th:action="@{/cart/add/{id}(id=${book.id})}" method="post">
+                        <button class="btn btn-sm btn-primary">Add to Cart</button>
                     </form>
                 </td>
             </tr>

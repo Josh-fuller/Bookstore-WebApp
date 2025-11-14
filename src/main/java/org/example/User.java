@@ -22,6 +22,10 @@ public class User {
     @Column(nullable = false)
     private String role = "CUSTOMER"; //CUSTOMER or ADMIN
 
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
+
+
     public User() {}
 
     public User(String username, String password, String email, String role) {

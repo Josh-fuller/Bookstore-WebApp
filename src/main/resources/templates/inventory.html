@@ -31,7 +31,6 @@
 <body class="pb-5"
       th:attr="data-inventory-id=${inventory.id}, data-is-admin=${isAdmin}">
 
-
 <nav class="navbar navbar-expand bg-primary mb-4">
     <div class="container-fluid">
         <span class="navbar-brand text-white fw-semibold">Bookstore Inventory</span>
@@ -69,7 +68,7 @@
 </div>
 
 <div class="container">
-    <!-- Search / filter form -->
+    <!-- Search / filter form (server-side AND used for live filtering) -->
     <form class="search-bar" th:action="@{/search}" method="get">
         <input type="text" name="title" placeholder="Search by title..." th:value="${title}" />
         <input type="number" name="minPrice" placeholder="Min price" step="0.01" th:value="${minPrice}" />
@@ -105,9 +104,13 @@
             </tr>
             </thead>
 
-            <!-- tbody that JS will fully control -->
+            <!-- tbody that JS will enhance (add/remove/filter rows) -->
             <tbody id="booksBody">
-            <tr th:each="book : ${books}" th:attr="data-book-id=${book.id}">
+            <tr th:each="book : ${books}"
+                th:attr="data-book-id=${book.id},
+                         data-title=${book.bookTitle},
+                         data-price=${book.bookPrice},
+                         data-genre=${book.bookGenre}">
                 <td>
                     <a href="#" class="text-decoration-none"
                        th:attr="data-bs-toggle='modal', data-bs-target='#bookModal__' + ${book.id}">
@@ -126,7 +129,8 @@
                 <td th:if="${isAdmin}">
                     <button type="button"
                             class="btn btn-sm btn-danger remove-book-btn"
-                            th:attr="data-book-id=${book.id}">
+                            th:attr="data-book-id=${book.id},
+                                     data-delete-url=@{/books/{id}/delete(id=${book.id})}">
                         Remove
                     </button>
                 </td>

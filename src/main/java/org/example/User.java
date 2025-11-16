@@ -22,13 +22,29 @@ public class User {
     @Column(nullable = false)
     private String role = "CUSTOMER"; //CUSTOMER or ADMIN
 
-    public User() {}
+    @OneToOne(cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @JoinColumn(name = "cart_id")
+    private BookInventory inCart;
+
+    @OneToOne(cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @JoinColumn(name = "purchased_id")
+    private BookInventory purchasedBooks;
+
+
+
+    public User() {
+        this.inCart = new BookInventory();
+        this.purchasedBooks = new BookInventory();
+    }
 
     public User(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+
+        this.inCart = new BookInventory();
+        this.purchasedBooks = new BookInventory();
     }
 
     //getters and setters
@@ -68,4 +84,29 @@ public class User {
     public boolean isCustomer() {
         return "CUSTOMER".equalsIgnoreCase(this.role);
     }
+    public BookInventory getInCart() {
+        return inCart;
+    }
+
+    public void setInCart(BookInventory inCart) {
+        this.inCart = inCart;
+    }
+
+    public BookInventory getPurchasedBooks() {
+        return purchasedBooks;
+    }
+
+    public void setPurchasedBooks(BookInventory purchasedBooks) {
+        this.purchasedBooks = purchasedBooks;
+    }
+
+    public boolean hasInCart(BookInfo book) {
+        return inCart != null && inCart.getBooks().contains(book);
+    }
+
+    public boolean hasPurchased(BookInfo book) {
+        return purchasedBooks != null && purchasedBooks.getBooks().contains(book);
+    }
+
+
 }

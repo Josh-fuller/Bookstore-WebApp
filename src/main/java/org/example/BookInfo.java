@@ -91,4 +91,18 @@ public class BookInfo {
         this.bookCoverURL = bookCoverURL;
     }
 
+    // .contains() needs to compare our books by IDs not objects
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BookInfo)) return false;
+        BookInfo other = (BookInfo) o;
+        return this.id != null && this.id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.hashCode();
+    }
+
 }

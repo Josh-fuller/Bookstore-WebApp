@@ -5,14 +5,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Controller
 public class AuthController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private BookRepository bookRepository;
 
     @GetMapping("/login")
     public String showLoginPage(Model model, HttpSession session) {
@@ -92,5 +99,94 @@ public class AuthController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+    }
+
+    @PostMapping("/cart/add/{id}")
+    public String addToCart(@PathVariable Long id, HttpSession session) {
+
+        // 1) Get the logged-in user from session
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
+            return "redirect:/login";
+        }
+
+        // 2) Reload a MANAGED copy from DB
+        User user = userService.findById(sessionUser.getId());
+        if (user == null) {
+            // session is stale
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // 3) Fetch the book (managed)
+        BookInfo book = bookRepository.findById(id).orElse(null);
+        if (book == null) {
+            return "redirect:/";
+        }
+
+        // 4) Avoid duplicates so if already purchased or in cart, do nothing
+        if (user.getPurchasedBooks() != null &&
+                user.getPurchasedBooks().getBooks().contains(book)) {
+            return "redirect:/";
+        }
+
+        if (user.getInCart() != null &&
+                user.getInCart().getBooks().contains(book)) {
+            return "redirect:/";
+        }
+
+        // 5) Add to cart
+        user.getInCart().addBook(book);
+
+        // 6) Save managed user
+        userService.saveUser(user);
+
+        // 7) Put the fresh managed user back into session
+        session.setAttribute("user", user);
+
+        return "redirect:/";
+    }
+
+
+    @PostMapping("/cart/remove/{bookId}")
+    public String removeFromCart(@PathVariable Long bookId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+
+        BookInfo book = bookRepository.findById(bookId).orElse(null);
+        if (book != null) {
+            user.getInCart().removeBook(book);
+            userService.saveUser(user);
+        }
+
+        // refresh session
+        session.setAttribute("user", userService.findById(user.getId()));
+
+        return "redirect:/";
+    }
+
+    @PostMapping("/cart/checkout")
+    public String checkout(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+
+        // 1. Make a temporary copy of cart books
+        List<BookInfo> temp = new ArrayList<>(user.getInCart().getBooks());
+
+        // 2. Add each book to purchasedBooks
+        for (BookInfo book : temp) {
+            user.getPurchasedBooks().addBook(book);
+        }
+
+        // 3. Remove each book from cart individually
+        for (BookInfo book : temp) {
+            user.getInCart().removeBook(book);
+        }
+        userService.saveUser(user);
+
+        // 5. Refresh session user
+        session.setAttribute("user", userService.findById(user.getId()));
+
+        return "redirect:/";
     }
 }

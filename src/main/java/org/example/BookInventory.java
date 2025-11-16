@@ -13,7 +13,7 @@ public class BookInventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<BookInfo> books = new ArrayList<>();
 
     public BookInventory() {}

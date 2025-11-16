@@ -29,6 +29,25 @@
                 <a class="btn btn-sm btn-light me-2" th:href="@{/login}">Login</a>
                 <a class="btn btn-sm btn-outline-light" th:href="@{/register}">Register</a>
             </div>
+            <button th:if="${isAdmin}"
+                    class="btn btn-warning"
+                    onclick="location.href='/reports'">
+                Reports
+            </button>
+
+            <button th:if="${isLoggedIn && !isAdmin}"
+                    class="btn btn-light me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cartModal">
+                View Cart
+            </button>
+
+            <button th:if="${isLoggedIn && !isAdmin}"
+                    class="btn btn-outline-light"
+                    data-bs-toggle="modal"
+                    data-bs-target="#purchasedModal">
+                Purchased Books
+            </button>
 
             <button th:if="${isAdmin}" class="btn btn-success"
                     onclick="document.getElementById('add-book').scrollIntoView({behavior:'smooth'})">
@@ -101,6 +120,27 @@
                         <button class="btn btn-sm btn-danger">Remove</button>
                     </form>
                 </td>
+                <td th:if="${isLoggedIn and !isAdmin}">
+
+                    <button class="btn btn-sm btn-secondary"
+                            th:if="${purchasedBooks.contains(book)}"
+                            disabled>
+                        Purchased
+                    </button>
+
+                    <button class="btn btn-sm btn-warning"
+                            th:if="${!purchasedBooks.contains(book) and cartBooks.contains(book)}"
+                            disabled>
+                        In Cart
+                    </button>
+
+                    <form th:if="${!purchasedBooks.contains(book) and !cartBooks.contains(book)}"
+                          th:action="@{/cart/add/{id}(id=${book.id})}"
+                          method="post">
+                        <button class="btn btn-sm btn-success">Add to Cart</button>
+                    </form>
+
+                </td>
             </tr>
             </tbody>
         </table>
@@ -131,6 +171,25 @@
                     </div>
                     <div class="modal-footer">
                         <a th:href="${book.bookCoverURL}" target="_blank" class="btn btn-outline-primary">View Full Cover</a>
+
+                        <button class="btn btn-secondary"
+                                th:if="${purchasedBooks.contains(book)}"
+                                disabled>
+                            Purchased
+                        </button>
+
+                        <button class="btn btn-warning"
+                                th:if="${!purchasedBooks.contains(book) and cartBooks.contains(book)}"
+                                disabled>
+                            In Cart
+                        </button>
+
+                        <form th:if="${!purchasedBooks.contains(book) and !cartBooks.contains(book)}"
+                              th:action="@{/cart/add/{id}(id=${book.id})}" method="post">
+                            <button class="btn btn-success">Add to Cart</button>
+                        </form>
+
+
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -170,5 +229,82 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- CART MODAL -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Your Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <p th:if="${#lists.isEmpty(cartBooks)}" class="text-muted">
+                    Your cart is empty.
+                </p>
+
+                <div th:each="book : ${cartBooks}" class="d-flex align-items-center mb-3 border-bottom pb-2">
+                    <img th:src="${book.bookCoverURL}" class="me-3" style="height:70px;">
+                    <div class="flex-grow-1">
+                        <strong th:text="${book.bookTitle}"></strong><br>
+                        <span th:text="${book.bookAuthor}"></span><br>
+                        <span th:text="${'$' + #numbers.formatDecimal(book.bookPrice,1,2)}"></span>
+                    </div>
+
+                    <form th:action="@{/cart/remove/{id}(id=${book.id})}" method="post">
+                        <button class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <form th:if="${!#lists.isEmpty(cartBooks)}" th:action="@{/cart/checkout}" method="post">
+                    <button class="btn btn-success">Checkout</button>
+                </form>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- PURCHASED BOOKS MODAL -->
+<div class="modal fade" id="purchasedModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Purchased Books</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <p th:if="${#lists.isEmpty(purchasedBooks)}" class="text-muted">
+                    You have not purchased any books yet.
+                </p>
+
+                <div th:each="book : ${purchasedBooks}" class="d-flex align-items-center mb-3 border-bottom pb-2">
+                    <img th:src="${book.bookCoverURL}" class="me-3" style="height:70px;">
+                    <div>
+                        <strong th:text="${book.bookTitle}"></strong><br>
+                        <span th:text="${book.bookAuthor}"></span><br>
+                        <span th:text="${'$' + #numbers.formatDecimal(book.bookPrice,1,2)}"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

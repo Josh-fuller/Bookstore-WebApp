@@ -110,4 +110,22 @@ public class UserService {
     public boolean emailExists(String email) {
         return userRepository.existsByEmail(email);
     }
+
+     /**
+     * Save the user info
+     *
+     * @param user
+     */
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+    /**
+     * Get the user by ID
+     *
+     * @param id
+     */
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
 }

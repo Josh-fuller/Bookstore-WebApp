@@ -23,15 +23,34 @@ public class BookController {
                 .findFirst()
                 .orElseGet(() -> inventoryRepository.save(new BookInventory()));
 
-        // ✅ Load all books from DB and sort alphabetically
+        //  Load all books from DB and sort alphabetically
         List<BookInfo> allBooks = bookRepository.findAll().stream()
                 .sorted(Comparator.comparing(BookInfo::getBookTitle, String.CASE_INSENSITIVE_ORDER))
                 .toList();
 
+
         User user = (User) session.getAttribute("user");
+
+        boolean isLoggedIn = (user != null);
+        boolean isAdmin = isLoggedIn && user.isAdmin();
+
         model.addAttribute("user", user);
-        model.addAttribute("isLoggedIn", user != null);
-        model.addAttribute("isAdmin", user != null && user.isAdmin());
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("isAdmin", isAdmin);
+
+        // Null-safe cart list
+        if (isLoggedIn && user.getInCart() != null) {
+            model.addAttribute("cartBooks", user.getInCart().getBooks());
+        } else {
+            model.addAttribute("cartBooks", java.util.List.of());
+        }
+
+        // Null-safe purchased list
+        if (isLoggedIn && user.getPurchasedBooks() != null) {
+            model.addAttribute("purchasedBooks", user.getPurchasedBooks().getBooks());
+        } else {
+            model.addAttribute("purchasedBooks", java.util.List.of());
+        }
 
         model.addAttribute("inventory", inventory);
         model.addAttribute("books", allBooks);
@@ -156,7 +175,7 @@ public class BookController {
         model.addAttribute("genre", genre);
 
 
-        // ✅ Debugging
+        // Debugging
         System.out.println("Search Request -> title=" + title + ", genre=" + genre +
                 ", minPrice=" + minPrice + ", maxPrice=" + maxPrice);
         System.out.println("Results found: " + filtered.size());
@@ -164,14 +183,11 @@ public class BookController {
         return "inventory";
     }
 
-
-
-
     // *experimental*
     private List<String> getDistinctGenres() {
         return bookRepository.findAll().stream()
                 .map(BookInfo::getBookGenre)
-                .filter(g -> g != null && !g.isBlank()) // ✅ filter out null or empty
+                .filter(g -> g != null && !g.isBlank()) // filter out null or empty
                 .flatMap(g -> Arrays.stream(g.split(",")))
                 .map(String::trim)
                 .filter(g -> !g.isEmpty())
@@ -179,7 +195,4 @@ public class BookController {
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .toList();
     }
-
-
-
 }

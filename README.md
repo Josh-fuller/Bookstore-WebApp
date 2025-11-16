@@ -10,6 +10,7 @@ The current implementation allows users to:
 - Remove books.
 - Login as an administrator or customer
 - As a customer you can add/remove books from your cart and view your cart.
+- Filter search for books by field
 
 Features Implemented:
 - Thymeleaf front-end template

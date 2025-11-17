@@ -28,8 +28,10 @@ Milestone 3 feature plans:
 - Comparing user-purchases
 
 UML Diagram:
-<img width="1357" height="886" alt="image" src="https://github.com/user-attachments/assets/861aeee5-fea8-4927-bedd-6dfc5eff63ed" />
+<img width="1209" height="913" alt="image" src="https://github.com/user-attachments/assets/492eda61-eb47-4d32-9819-aac92a97a289" />
+
 
 
 ORM Diagram:
-<img width="771" height="466" alt="image" src="https://github.com/user-attachments/assets/b3443a31-97bd-47e7-87db-0a6f6ef6d4e4" />
+<img width="529" height="441" alt="image" src="https://github.com/user-attachments/assets/9eab5426-dfc4-44ef-a782-314351de30a4" />
+

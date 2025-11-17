@@ -1,14 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("[inventory.js] loaded");
 
-    const body = document.body;
-    const isAdmin = body.dataset.isAdmin === "true";
+    const body        = document.body;
+    const isAdmin     = body.dataset.isAdmin === "true";
+    const inventoryId = body.dataset.inventoryId;
 
-    const tableBody = document.getElementById("booksBody");
+    if (!inventoryId) {
+        console.error("No inventory ID on <body>");
+    }
+
+    const tableBody   = document.getElementById("booksBody");
     const addBookForm = document.getElementById("addBookForm");
-    const searchForm = document.querySelector("form.search-bar");
+    const searchForm  = document.querySelector("form.search-bar");
 
-    const titleInput   = searchForm?.querySelector('input[name="title"]');
+    const titleInput    = searchForm?.querySelector('input[name="title"]');
     const minPriceInput = searchForm?.querySelector('input[name="minPrice"]');
     const maxPriceInput = searchForm?.querySelector('input[name="maxPrice"]');
     const genreSelect   = searchForm?.querySelector('select[name="genre"]');
@@ -32,9 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function applyFilters() {
         if (!tableBody) return;
 
-        const titleTerm   = (titleInput?.value ?? "").trim().toLowerCase();
-        const minPriceVal = minPriceInput?.value;
-        const maxPriceVal = maxPriceInput?.value;
+        const titleTerm     = (titleInput?.value ?? "").trim().toLowerCase();
+        const minPriceVal   = minPriceInput?.value;
+        const maxPriceVal   = maxPriceInput?.value;
         const selectedGenre = genreSelect?.value ?? "";
 
         const minPrice = minPriceVal !== "" ? parseFloat(minPriceVal) : null;
@@ -43,25 +48,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const rows = tableBody.querySelectorAll("tr");
 
         rows.forEach((row) => {
-            const rowTitle = (row.dataset.title || "").toLowerCase();
+            const rowTitle    = (row.dataset.title || "").toLowerCase();
             const rowPriceRaw = row.dataset.price;
-            const rowPrice = rowPriceRaw !== undefined ? parseFloat(rowPriceRaw) : NaN;
-            const rowGenre = row.dataset.genre || "";
+            const rowPrice    = rowPriceRaw !== undefined ? parseFloat(rowPriceRaw) : NaN;
+            const rowGenre    = row.dataset.genre || "";
 
             let visible = true;
 
             if (titleTerm && !rowTitle.includes(titleTerm)) {
                 visible = false;
             }
-
             if (minPrice !== null && !Number.isNaN(rowPrice) && rowPrice < minPrice) {
                 visible = false;
             }
-
             if (maxPrice !== null && !Number.isNaN(rowPrice) && rowPrice > maxPrice) {
                 visible = false;
             }
-
             if (selectedGenre && rowGenre !== selectedGenre) {
                 visible = false;
             }
@@ -72,11 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function hookRemoveButton(btn) {
         btn.addEventListener("click", async () => {
-            const row = btn.closest("tr");
             const bookId = btn.getAttribute("data-book-id");
-            const deleteUrl =
-                btn.getAttribute("data-delete-url") || `/books/${bookId}/delete`;
-
             if (!bookId) {
                 console.warn("Remove button without data-book-id");
                 return;
@@ -87,20 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                const res = await fetch(deleteUrl, { method: "DELETE" });
-
-                if (!res.ok && res.status !== 204) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-
-                // Remove table row
-                row && row.remove();
-
-                // Remove corresponding modal if it exists
-                const modal = document.getElementById(`bookModal__${bookId}`);
-                if (modal) modal.remove();
-
-                applyFilters();
+                await removeBook(bookId);
+                await loadBooks();
             } catch (err) {
                 console.error("Remove book error:", err);
                 alert("Could not remove book.");
@@ -151,8 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>
                 <button type="button"
                         class="btn btn-sm btn-danger remove-book-btn"
-                        data-book-id="${book.id}"
-                        data-delete-url="/books/${book.id}/delete">
+                        data-book-id="${book.id}">
                     Remove
                 </button>
             </td>`
@@ -230,9 +215,96 @@ document.addEventListener("DOMContentLoaded", () => {
         return div;
     }
 
+    // ---------- API calls (same endpoints as your working version) ----------
+
+    async function loadBooks() {
+        if (!inventoryId || !tableBody) return;
+
+        try {
+            const res = await fetch(`/api/inventories/${inventoryId}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+            const books = data.books || [];
+
+            // Rebuild table body
+            tableBody.innerHTML = "";
+
+            books.forEach((b) => {
+                const row = createBookRow(b);
+                tableBody.appendChild(row);
+
+                // Make sure each book has a modal; if Thymeleaf already rendered it, skip
+                if (!document.getElementById(`bookModal__${b.id}`)) {
+                    const container = document.querySelector(".container");
+                    if (container) {
+                        const modal = createBookModal(b);
+                        container.appendChild(modal);
+                    }
+                }
+            });
+
+            applyFilters();
+        } catch (err) {
+            console.error("Error loading books:", err);
+        }
+    }
+
+    async function addBookViaApi() {
+        if (!inventoryId) {
+            throw new Error("No inventoryId available for addBookViaApi");
+        }
+        const fd = new FormData(addBookForm);
+
+        const genreValues = fd.getAll("bookGenre");
+        const genres = genreValues.join(", ");
+
+        const rawIsbn = fd.get("bookISBN") || "";
+        const normalizedIsbn = rawIsbn.trim().replaceAll("-", "").replace(/\s+/g, "");
+
+        const bookPayload = {
+            bookTitle: fd.get("bookTitle"),
+            bookAuthor: fd.get("bookAuthor"),
+            bookPublisher: fd.get("bookPublisher"),
+            bookISBN: rawIsbn,
+            bookPrice: parseFloat(fd.get("bookPrice")),
+            bookGenre: genres,
+            bookDescription: fd.get("bookDescription"),
+            bookCoverURL: normalizedIsbn
+                ? `https://covers.openlibrary.org/b/isbn/${normalizedIsbn}-L.jpg`
+                : null
+        };
+
+        const res = await fetch(`/api/inventories/${inventoryId}/books`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(bookPayload)
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+        // We don't trust the response shape; we'll just reload via GET.
+    }
+
+    async function removeBook(bookId) {
+        if (!inventoryId) {
+            throw new Error("No inventoryId available for removeBook");
+        }
+        const res = await fetch(`/api/inventories/${inventoryId}/books/${bookId}`, {
+            method: "DELETE"
+        });
+        if (!res.ok && res.status !== 204) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+    }
+
     // ---------- Initial wiring ----------
 
-    // Hook remove buttons for rows rendered by Thymeleaf
+    // Hook remove buttons for rows rendered by Thymeleaf (first paint)
     if (isAdmin && tableBody) {
         tableBody
             .querySelectorAll(".remove-book-btn")
@@ -240,48 +312,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Live filtering using the original form inputs
-    if (titleInput)   titleInput.addEventListener("input", applyFilters);
+    if (titleInput)    titleInput.addEventListener("input", applyFilters);
     if (minPriceInput) minPriceInput.addEventListener("input", applyFilters);
     if (maxPriceInput) maxPriceInput.addEventListener("input", applyFilters);
     if (genreSelect)   genreSelect.addEventListener("change", applyFilters);
 
-    // Add book via AJAX
+    // Add book via API + full reload
     if (addBookForm) {
         addBookForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const formData = new FormData(addBookForm);
-            const payload = Object.fromEntries(formData.entries());
-
             try {
-                const res = await fetch(addBookForm.action, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-
-                const created = await res.json();
-
-                // Add row to table
-                if (tableBody) {
-                    const row = createBookRow(created);
-                    tableBody.appendChild(row);
-                }
-
-                // Add modal
-                const container = document.querySelector(".container");
-                if (container) {
-                    const modal = createBookModal(created);
-                    container.appendChild(modal);
-                }
-
+                await addBookViaApi();
+                await loadBooks();
                 addBookForm.reset();
                 applyFilters();
             } catch (err) {
@@ -291,6 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Run once in case title/min/max/genre have values from server-side search
-    applyFilters();
+    // Initial load from API to sync everything
+    loadBooks();
 });

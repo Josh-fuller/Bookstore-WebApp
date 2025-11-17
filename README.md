@@ -8,6 +8,9 @@ The current implementation allows users to:
 - View all books currently stored in the database.
 - Add new books (title, genre, price, ISBN).
 - Remove books.
+- Login as an administrator or customer
+- As a customer you can add/remove books from your cart and view your cart.
+- Filter search for books by field
 
 Features Implemented:
 - Thymeleaf front-end template
@@ -17,13 +20,12 @@ Features Implemented:
 - Automatically updates the table after each add/remove via full page reload
 - Project deployment on Azure
 
-Milestone 2 feature plans:
-- Users and login (admin vs customers)
-- Shopping cart
-  - Checkout
-  - Changing inventory based on purchases
+Milestone 3 feature plans:
+- Show book reccomendations based on Jaccard distances
+- Ability to view purchase history and get reccomendations based on past purchases
 - Seperate pages for book details
-- Book search (sort and filter)
+- Actual per-book inventories
+- Comparing user-purchases
 
 UML Diagram:
 <img width="1357" height="886" alt="image" src="https://github.com/user-attachments/assets/861aeee5-fea8-4927-bedd-6dfc5eff63ed" />

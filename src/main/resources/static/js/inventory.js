@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const body        = document.body;
     const isAdmin     = body.dataset.isAdmin === "true";
+    const isLoggedIn  = body.dataset.isLoggedIn === "true";
     const inventoryId = body.dataset.inventoryId;
 
     if (!inventoryId) {
@@ -132,18 +133,29 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${priceText}</td>
             <td>${escapeHtml(shortDesc)}</td>
             ${
-            isAdmin
-                ? `
-            <td>
-                <button type="button"
-                        class="btn btn-sm btn-danger remove-book-btn"
-                        data-book-id="${book.id}">
-                    Remove
-                </button>
-            </td>`
-                : ""
-        }
-        `;
+                        isAdmin
+                            ? `
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-danger remove-book-btn"
+                                data-book-id="${book.id}">
+                            Remove
+                        </button>
+                    </td>`
+                            : isLoggedIn
+                                ? `
+                    <td>
+                        <form method="post" action="/cart/add/${book.id}">
+                            <button type="submit"
+                                    class="btn btn-sm btn-primary">
+                                Add to Cart
+                            </button>
+                        </form>
+                    </td>`
+                                : ""
+                    }
+            `;
+
 
         if (isAdmin) {
             const btn = tr.querySelector(".remove-book-btn");

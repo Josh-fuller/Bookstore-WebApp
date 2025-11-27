@@ -29,7 +29,7 @@
 </head>
 
 <body class="pb-5"
-      th:attr="data-inventory-id=${inventory.id}, data-is-admin=${isAdmin}">
+      th:attr="data-inventory-id=${inventory.id}, data-is-admin=${isAdmin}, data-is-logged-in=${isLoggedIn}">
 
 <nav class="navbar navbar-expand bg-primary mb-4">
     <div class="container-fluid">
@@ -54,6 +54,12 @@
                class="btn btn-outline-light"
                th:href="@{/cart}">
                 View Cart
+            </a>
+
+            <a th:if="${isLoggedIn and !isAdmin}"
+               class="btn btn-outline-light"
+               th:href="@{/purchase-history}">
+                Purchase History
             </a>
 
             <button th:if="${isAdmin}" class="btn btn-success"

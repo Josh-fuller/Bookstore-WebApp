@@ -2,6 +2,7 @@ package org.example;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -9,10 +10,12 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final BookRepository bookRepository;
+    private final PurchaseHistoryService purchaseHistoryService;
 
-    public CartService(CartRepository cartRepository, BookRepository bookRepository) {
+    public CartService(CartRepository cartRepository, BookRepository bookRepository, PurchaseHistoryService purchaseHistoryService) {
         this.cartRepository = cartRepository;
         this.bookRepository = bookRepository;
+        this.purchaseHistoryService = purchaseHistoryService;
     }
 
     public Cart getOrCreateCart(User user) {
@@ -46,4 +49,35 @@ public class CartService {
             cartRepository.save(cart);
         });
     }
+
+    public void checkout(User user) {
+        Cart cart = getOrCreateCart(user);
+
+        if (cart.getBooks().isEmpty()) {
+            return; // nothing to do
+        }
+
+        // Get or create purchase history for this user
+        PurchaseHistory history = purchaseHistoryService.getOrCreateHistory(user);
+
+        // Move all books from cart → history
+        history.getBooks().addAll(cart.getBooks());
+        cart.getBooks().clear();
+
+        // Persist
+        purchaseHistoryService.save(history);
+        cartRepository.save(cart);
+    }
+
+    public double getCartTotal(User user) {
+        Cart cart = getOrCreateCart(user);
+        return cart.getBooks().stream()
+                .map(BookInfo::getBookPrice)
+                .filter(Objects::nonNull)
+                .mapToDouble(Double::doubleValue)
+                .sum();
+    }
+
+
+
 }

@@ -61,7 +61,24 @@ public class CartController {
         model.addAttribute("books", cart.getBooks());
         model.addAttribute("cartId", cart.getId());
 
+        double total = cartService.getCartTotal(user);
+        model.addAttribute("totalPrice", total);
+
         // Cart page doesn’t need genres/search for now, but we coud add them later
         return "cart";
     }
+
+    @PostMapping("/cart/checkout")
+    public String checkout(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        // Must be logged in AND must be a customer
+        if (user == null || user.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        cartService.checkout(user);
+        return "redirect:/purchase-history";
+    }
+
 }

@@ -35,6 +35,32 @@ document.addEventListener("DOMContentLoaded", () => {
         return `$${num.toFixed(2)}`;
     };
 
+    function showCartToast(message) {
+        // Simple lightweight message; you can replace with Bootstrap toast later
+        let box = document.getElementById("cart-toast-box");
+        if (!box) {
+            box = document.createElement("div");
+            box.id = "cart-toast-box";
+            box.style.position = "fixed";
+            box.style.top = "10px";
+            box.style.right = "10px";
+            box.style.zIndex = "9999";
+            document.body.appendChild(box);
+        }
+
+        const alert = document.createElement("div");
+        alert.className = "alert alert-success py-1 px-2 mb-2";
+        alert.textContent = message || "Added to cart!";
+        box.appendChild(alert);
+
+        setTimeout(() => {
+            alert.remove();
+            if (!box.hasChildNodes()) {
+                box.remove();
+            }
+        }, 2500);
+    }
+
     function applyFilters() {
         if (!tableBody) return;
 
@@ -73,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ---------- Admin remove wiring ----------
+
     function hookRemoveButton(btn) {
         btn.addEventListener("click", async () => {
             const bookId = btn.getAttribute("data-book-id");
@@ -94,6 +122,53 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // ---------- Add-to-cart wiring (dynamic) ----------
+
+    function hookAddToCartForm(form) {
+        // Prevent double-binding the same form
+        if (form.dataset.cartHooked === "true") {
+            return;
+        }
+        form.dataset.cartHooked = "true";
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const action = form.getAttribute("action");
+            if (!action) {
+                console.warn("Add-to-cart form without action");
+                return;
+            }
+
+            try {
+                const res = await fetch(action, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                showCartToast("Added to cart!");
+                // If you later add a cart count badge in navbar, update it here.
+            } catch (err) {
+                console.error("Add to cart error:", err);
+                alert("Could not add to cart.");
+            }
+        });
+    }
+
+    function wireAllAddToCartForms() {
+        if (!tableBody || !isLoggedIn || isAdmin) return;
+        const forms = tableBody.querySelectorAll('form[action^="/cart/add/"]');
+        forms.forEach((f) => hookAddToCartForm(f));
+    }
+
+    // ---------- Row / modal creation ----------
 
     function createBookRow(book) {
         const tr = document.createElement("tr");
@@ -133,33 +208,35 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${priceText}</td>
             <td>${escapeHtml(shortDesc)}</td>
             ${
-                        isAdmin
-                            ? `
-                    <td>
-                        <button type="button"
-                                class="btn btn-sm btn-danger remove-book-btn"
-                                data-book-id="${book.id}">
-                            Remove
+            isAdmin
+                ? `
+                <td>
+                    <button type="button"
+                            class="btn btn-sm btn-danger remove-book-btn"
+                            data-book-id="${book.id}">
+                        Remove
+                    </button>
+                </td>`
+                : isLoggedIn
+                    ? `
+                <td>
+                    <form method="post" action="/cart/add/${book.id}">
+                        <button type="submit"
+                                class="btn btn-sm btn-primary">
+                            Add to Cart
                         </button>
-                    </td>`
-                            : isLoggedIn
-                                ? `
-                    <td>
-                        <form method="post" action="/cart/add/${book.id}">
-                            <button type="submit"
-                                    class="btn btn-sm btn-primary">
-                                Add to Cart
-                            </button>
-                        </form>
-                    </td>`
-                                : ""
-                    }
-            `;
-
+                    </form>
+                </td>`
+                    : ""
+        }
+        `;
 
         if (isAdmin) {
             const btn = tr.querySelector(".remove-book-btn");
             if (btn) hookRemoveButton(btn);
+        } else if (isLoggedIn) {
+            const form = tr.querySelector('form[action^="/cart/add/"]');
+            if (form) hookAddToCartForm(form);
         }
 
         return tr;
@@ -227,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return div;
     }
 
-    // ---------- API calls (same endpoints as your working version) ----------
+    // ---------- API calls ----------
 
     async function loadBooks() {
         if (!inventoryId || !tableBody) return;
@@ -256,7 +333,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
+            // Reapply filters
             applyFilters();
+            // No need to call wireAllAddToCartForms() here because createBookRow already hooks them
         } catch (err) {
             console.error("Error loading books:", err);
         }
@@ -299,7 +378,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!res.ok) {
             throw new Error(`HTTP ${res.status}`);
         }
-        // We don't trust the response shape; we'll just reload via GET.
     }
 
     async function removeBook(bookId) {
@@ -323,13 +401,16 @@ document.addEventListener("DOMContentLoaded", () => {
             .forEach((btn) => hookRemoveButton(btn));
     }
 
+    // Hook add-to-cart forms for rows rendered by Thymeleaf (first paint)
+    wireAllAddToCartForms();
+
     // Live filtering using the original form inputs
     if (titleInput)    titleInput.addEventListener("input", applyFilters);
     if (minPriceInput) minPriceInput.addEventListener("input", applyFilters);
     if (maxPriceInput) maxPriceInput.addEventListener("input", applyFilters);
     if (genreSelect)   genreSelect.addEventListener("change", applyFilters);
 
-    // Add book via API + full reload
+    // Add book via API + full reload (of table)
     if (addBookForm) {
         addBookForm.addEventListener("submit", async (e) => {
             e.preventDefault();

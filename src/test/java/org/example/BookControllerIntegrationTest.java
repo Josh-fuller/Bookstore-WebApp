@@ -31,12 +31,20 @@ class BookControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private PurchaseHistoryRepository purchaseHistoryRepository;
+
     private BookInventory inventory;
     private BookInfo book;
     private User user;
 
     @BeforeEach
     void setUp() {
+        cartRepository.deleteAll();
+        purchaseHistoryRepository.deleteAll();
         bookInventoryRepository.deleteAll();
         bookRepository.deleteAll();
         userRepository.deleteAll();
@@ -61,7 +69,10 @@ class BookControllerIntegrationTest {
                 .andExpect(view().name("inventory"))
                 .andExpect(model().attributeExists("inventory"))
                 .andExpect(model().attributeExists("books"))
-                .andExpect(model().attributeExists("newBook"));
+                .andExpect(model().attributeExists("newBook"))
+                .andExpect(model().attributeExists("genres"))
+                .andExpect(model().attributeExists("isLoggedIn"))
+                .andExpect(model().attributeExists("isAdmin"));
     }
 
     @Test
@@ -74,13 +85,12 @@ class BookControllerIntegrationTest {
         mockMvc.perform(post("/addBook")
                         .session(adminSession)
                         .param("bookTitle", "Catching Fire")
-                        .param("bookGenres", "Fantasy")
+                        .param("bookGenre", "Fantasy")
                         .param("bookPrice", "19.99")
                         .param("bookISBN", "9780439023498")
                         .param("bookAuthor", "Suzanne Collins")
                         .param("bookPublisher", "Scholastic")
-                        .param("bookDescription", "Second book in the series")
-                        .param("bookCoverURL", "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1586722941i/6148028.jpg"))
+                        .param("bookDescription", "Second book in the series"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
     }
@@ -98,5 +108,36 @@ class BookControllerIntegrationTest {
         mockMvc.perform(post("/removeBook/{id}", book.getId()).session(adminSession))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    void whenSearchBooks_thenReturnFilteredResults() throws Exception {
+        mockMvc.perform(get("/search")
+                        .param("title", "Hunger")
+                        .param("minPrice", "10.0")
+                        .param("maxPrice", "25.0")
+                        .param("genre", "Fantasy"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("inventory"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("genres"));
+    }
+
+    @Test
+    void whenAddBookWithoutLogin_thenRedirectToLogin() throws Exception {
+        mockMvc.perform(post("/addBook")
+                        .param("bookTitle", "Test Book")
+                        .param("bookGenre", "Fiction")
+                        .param("bookPrice", "15.99")
+                        .param("bookISBN", "1234567890"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    void whenRemoveBookWithoutLogin_thenRedirectToLogin() throws Exception {
+        mockMvc.perform(post("/removeBook/{id}", book.getId()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
 }

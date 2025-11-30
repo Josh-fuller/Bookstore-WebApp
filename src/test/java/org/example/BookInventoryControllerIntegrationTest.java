@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,13 +32,25 @@ class BookInventoryControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private PurchaseHistoryRepository purchaseHistoryRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private BookInventory inventory;
     private BookInfo book;
 
     @BeforeEach
     void setUp() {
+        cartRepository.deleteAll();
+        purchaseHistoryRepository.deleteAll();
         bookInventoryRepository.deleteAll();
         bookRepository.deleteAll();
+        userRepository.deleteAll();
 
         inventory = new BookInventory();
         bookInventoryRepository.save(inventory);
@@ -143,7 +154,7 @@ class BookInventoryControllerIntegrationTest {
     }
 
     @Test
-    void deleteExistingBook_() throws Exception {
+    void deleteExistingBook() throws Exception {
         mockMvc.perform(delete("/api/inventories/books/{bookId}", book.getId()))
                 .andExpect(status().isNoContent());
     }
@@ -152,5 +163,38 @@ class BookInventoryControllerIntegrationTest {
     void deleteNonExistingBook() throws Exception {
         mockMvc.perform(delete("/api/inventories/books/{bookId}", 999L))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteInventory() throws Exception {
+        mockMvc.perform(delete("/api/inventories/{id}", inventory.getId()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteNonExistingInventory() throws Exception {
+        mockMvc.perform(delete("/api/inventories/{id}", 999L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getBookById() throws Exception {
+        mockMvc.perform(get("/api/inventories/books/{bookId}", book.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(book.getId()))
+                .andExpect(jsonPath("$.bookTitle").value("The Hunger Games"));
+    }
+
+    @Test
+    void getNonExistingBook() throws Exception {
+        mockMvc.perform(get("/api/inventories/books/{bookId}", 999L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAllBooks() throws Exception {
+        mockMvc.perform(get("/api/inventories/books"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
     }
 }

@@ -80,9 +80,9 @@ class BookInventoryTest {
         List<BookInfo> sortedBooks = inventory.getBooks();
 
         assertEquals(3, sortedBooks.size());
-        assertEquals("The Hunger Games", sortedBooks.get(2).getBookTitle());
         assertEquals("Catching Fire", sortedBooks.get(0).getBookTitle());
         assertEquals("Mockingjay", sortedBooks.get(1).getBookTitle());
+        assertEquals("The Hunger Games", sortedBooks.get(2).getBookTitle());
     }
 
     @Test

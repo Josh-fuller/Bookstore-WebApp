@@ -1,7 +1,6 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +61,6 @@ class BookInfoTest {
         book.setBookDescription(description);
         book.setBookCoverURL("https://pictures.abebooks.com/isbn/9780590353427-us.jpg");
 
-        // Then
         assertNull(book.getId());
         assertEquals("Harry Potter and the Sorcerer's Stone", book.getBookTitle());
         assertEquals("Fantasy", book.getBookGenre());
@@ -79,7 +77,6 @@ class BookInfoTest {
         BookInfo book = new BookInfo("Test Book", "Fantasy", 20.00,
                 "123", "Author", "Publisher", "Desc", "URL");
 
-        // When & Then
         assertEquals("Test Book", book.getBookTitle());
         book.setBookTitle("Test Book Part 2");
         assertEquals("Test Book Part 2", book.getBookTitle());

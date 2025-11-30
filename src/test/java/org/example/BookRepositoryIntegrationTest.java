@@ -128,4 +128,24 @@ class BookRepositoryIntegrationTest {
         assertTrue(prices.contains(25.00));
         assertTrue(prices.contains(30.00));
     }
+
+    @Test
+    void findByBookPublisherContainingIgnoreCase() {
+        entityManager.persist(book1);
+        entityManager.persist(book2);
+        entityManager.flush();
+
+        List<BookInfo> found = bookRepository.findByBookPublisherContainingIgnoreCase("scholastic");
+        assertEquals(2, found.size());
+    }
+
+    @Test
+    void findDistinctGenres() {
+        entityManager.persist(book1);
+        entityManager.persist(book2);
+        entityManager.flush();
+
+        List<String> genres = bookRepository.findDistinctGenres();
+        assertNotNull(genres);
+    }
 }

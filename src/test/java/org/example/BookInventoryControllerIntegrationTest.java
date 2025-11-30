@@ -32,13 +32,25 @@ class BookInventoryControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private PurchaseHistoryRepository purchaseHistoryRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private BookInventory inventory;
     private BookInfo book;
 
     @BeforeEach
     void setUp() {
+        cartRepository.deleteAll();
+        purchaseHistoryRepository.deleteAll();
         bookInventoryRepository.deleteAll();
         bookRepository.deleteAll();
+        userRepository.deleteAll();
 
         inventory = new BookInventory();
         bookInventoryRepository.save(inventory);

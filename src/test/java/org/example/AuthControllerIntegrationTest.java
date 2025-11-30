@@ -27,8 +27,16 @@ class AuthControllerIntegrationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private PurchaseHistoryRepository purchaseHistoryRepository;
+
     @BeforeEach
     void setUp() {
+        cartRepository.deleteAll();
+        purchaseHistoryRepository.deleteAll();
         userRepository.deleteAll();
     }
 

@@ -29,4 +29,10 @@ public interface BookRepository extends JpaRepository<BookInfo, Long> {
     @Query("SELECT DISTINCT b.bookGenres FROM BookInfo b")
     List<String> findDistinctGenres();
 
+    //a fallback method
+    List<BookInfo> findTop10ByOrderByBookPriceDesc();
+
+    // genre based recommendations
+    List<BookInfo> findTop10ByBookGenresOrderByBookPriceDesc(String genre);
+
 }

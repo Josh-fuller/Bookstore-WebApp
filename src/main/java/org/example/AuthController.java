@@ -8,11 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RecommendationService recommendationService;
 
     @GetMapping("/login")
     public String showLoginPage(Model model, HttpSession session) {
@@ -21,6 +26,8 @@ public class AuthController {
         }
         return "login";
     }
+
+
 
     @GetMapping("/register")
     public String showRegisterPage(Model model, HttpSession session) {
@@ -32,7 +39,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, HttpSession session, Model model) {
-        
+
         User user = userService.authenticateUser(username, password);
 
         if (user != null) {
@@ -92,5 +99,21 @@ public class AuthController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+    }
+
+    @GetMapping("/recommendations")
+    public String showRecommendations(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login";
+        if (user.isAdmin()) return "redirect:/";
+
+        List<BookInfo> recommendedBooks = recommendationService.getRecommendations(user, 10);
+
+        model.addAttribute("user", user);
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("isAdmin", false);
+        model.addAttribute("recommendedBooks", recommendedBooks);
+
+        return "recommendations";
     }
 }

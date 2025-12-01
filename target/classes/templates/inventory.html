@@ -113,7 +113,6 @@
             <tr>
                 <th>Cover</th><th>Title</th><th>Author</th><th>Genre</th>
                 <th>Price</th><th>Description</th>
-                <th>Stock</th>
                 <th th:if="${isAdmin}">Admin</th>
                 <th th:if="${isLoggedIn and !isAdmin}">Cart</th>
             </tr>
@@ -140,20 +139,6 @@
                 <td th:text="${book.bookGenre}">Genre</td>
                 <td th:text="${'$' + #numbers.formatDecimal(book.bookPrice, 1, 2)}">$0.00</td>
                 <td th:text="${#strings.abbreviate(book.bookDescription, 60)}">Desc</td>
-                <td>
-                    <span th:text="${book.inventory}"></span>
-
-                    <!-- Admin-only stock controls -->
-                    <span th:if="${isAdmin}" class="ms-2">
-                        <form th:action="@{/books/{id}/stock/inc(id=${book.id})}" method="post" style="display:inline;">
-                            <button class="btn btn-sm btn-success">+</button>
-                        </form>
-                        <form th:action="@{/books/{id}/stock/dec(id=${book.id})}" method="post" style="display:inline;">
-                            <button class="btn btn-sm btn-warning">−</button>
-                        </form>
-                     </span>
-                </td>
-
                 <td th:if="${isAdmin}">
                     <button type="button"
                             class="btn btn-sm btn-danger remove-book-btn"
@@ -197,8 +182,6 @@
                             <p><strong>ISBN:</strong> <span th:text="${book.bookISBN}"></span></p>
                             <hr>
                             <p th:text="${book.bookDescription}"></p>
-                            <p><strong>Inventory:</strong> <span th:text="${book.inventory}"></span></p>
-
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -237,15 +220,6 @@
         <div class="mb-2">
             <label class="form-label">Price ($)</label>
             <input class="form-control" type="number" step="0.01" th:field="*{bookPrice}" required>
-        </div>
-        <div class="mb-2">
-            <label class="form-label">Inventory</label>
-            <input class="form-control"
-                   type="number"
-                   min="0"
-                   th:field="*{inventory}"
-                   value="5"
-                   required>
         </div>
         <div class="mb-2">
             <label class="form-label">Genres</label>

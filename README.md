@@ -34,5 +34,5 @@ UML Diagram:
 
 
 ORM Diagram:
-<img width="529" height="441" alt="image" src="https://github.com/user-attachments/assets/9eab5426-dfc4-44ef-a782-314351de30a4" />
+<img width="596" height="732" alt="image" src="https://github.com/user-attachments/assets/01dd4b5c-c8cb-45d1-8fba-3076b1a1bbdf" />
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Online Bookstore Inventory Login</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+            margin: 40px;
+        }
+        h1 {
+            color: #333;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        .success {
+            color: green;
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            padding: 5px;
+            width: 300px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 20px;
+        }
+        .links {
+            margin-top: 20px;
+        }
+        .links a {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Login</h1>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <form th:action="@{/login}" method="post">
+        <label>Username: <input type="text" name="username" required/></label><br/>
+        <label>Password: <input type="password" name="password" required/></label><br/>
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="links">
+        <a th:href="@{/register}">Register</a>
+        <a th:href="@{/}">Back to Home</a>
+    </div>
+</body>
+</html>

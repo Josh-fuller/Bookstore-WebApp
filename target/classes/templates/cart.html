@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Your Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { background:#f8f9fa; }
+        .cover-img { height:80px; border-radius:4px; }
+    </style>
+</head>
+<body class="pb-5">
+
+<nav class="navbar navbar-expand bg-primary mb-4">
+    <div class="container-fluid">
+        <span class="navbar-brand text-white fw-semibold">Your Cart</span>
+
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <div th:if="${isLoggedIn}" class="text-white">
+                <span>Welcome, <strong th:text="${user.username}">user</strong></span>
+                <span th:if="${isAdmin}" class="badge bg-warning text-dark ms-2">ADMIN</span>
+                <span th:unless="${isAdmin}" class="badge bg-light text-dark ms-2">CUSTOMER</span>
+                <a class="btn btn-sm btn-outline-light ms-3" th:href="@{/logout}">Logout</a>
+            </div>
+
+            <div th:unless="${isLoggedIn}">
+                <a class="btn btn-sm btn-light me-2" th:href="@{/login}">Login</a>
+                <a class="btn btn-sm btn-outline-light" th:href="@{/register}">Register</a>
+            </div>
+
+            <a class="btn btn-outline-light" th:href="@{/}">Back to Inventory</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h5>Your Cart</h5>
+
+    <!-- Dynamic empty / summary messages -->
+    <p id="emptyCartMessage"
+       class="text-muted"
+       th:attr="style=${#lists.isEmpty(books)} ? '' : 'display:none'">
+        Your cart is empty.
+    </p>
+
+    <p id="cartSummary"
+       class="text-muted"
+       th:attr="style=${#lists.isEmpty(books)} ? 'display:none' : ''">
+        Total items: <span id="cartTotalItems" th:text="${#lists.size(books)}"></span>
+    </p>
+
+    <!-- Cart table wrapper, toggled via JS -->
+    <div id="cartTableWrapper"
+         class="table-responsive mb-5"
+         th:attr="style=${#lists.isEmpty(books)} ? 'display:none' : ''">
+        <table class="table align-middle table-striped table-bordered">
+            <thead class="table-light">
+            <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genre</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody id="cartBody">
+            <tr th:each="book : ${books}"
+                th:attr="data-book-id=${book.id}, data-price=${book.bookPrice}">
+                <td>
+                    <img th:src="${book.bookCoverURL}" class="cover-img" alt="Cover" />
+                </td>
+                <td th:text="${book.bookTitle}">Book Title</td>
+                <td th:text="${book.bookAuthor}">Author</td>
+                <td th:text="${book.bookGenre}">Genre</td>
+                <td th:text="${'$' + #numbers.formatDecimal(book.bookPrice, 1, 2)}">$0.00</td>
+                <td th:text="${#strings.abbreviate(book.bookDescription, 60)}">Desc</td>
+                <td>
+                    <form th:action="@{/cart/remove/{id}(id=${book.id})}" method="post">
+                        <button class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <!-- 7 columns total: Cover, Title, Author, Genre, Price, Description, Remove -->
+                <th colspan="4" class="text-end">Total price:</th>
+                <th class="text-start"
+                    id="cartTotalPrice"
+                    th:text="${'$' + #numbers.formatDecimal(totalPrice, 1, 2)}">
+                    $0.00
+                </th>
+                <th colspan="2"></th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Checkout + continue only if there are items (toggled via JS) -->
+    <div id="cartActions"
+         class="d-flex justify-content-between mb-3"
+         th:attr="style=${#lists.isEmpty(books)} ? 'display:none' : ''">
+        <form th:action="@{/cart/checkout}" method="post">
+            <button class="btn btn-success">Checkout</button>
+        </form>
+
+        <a class="btn btn-outline-secondary" th:href="@{/}">
+            Continue Shopping
+        </a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/cart.js"></script>
+</body>
+</html>

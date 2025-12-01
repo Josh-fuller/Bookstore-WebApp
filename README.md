@@ -29,10 +29,11 @@ Features Implemented:
   
 
 UML Diagram:
-<img width="1209" height="913" alt="image" src="https://github.com/user-attachments/assets/492eda61-eb47-4d32-9819-aac92a97a289" />
+<img width="1142" height="816" alt="image" src="https://github.com/user-attachments/assets/88513386-c9fb-4714-99da-975c81f5e189" />
+
 
 
 
 ORM Diagram:
-<img width="529" height="441" alt="image" src="https://github.com/user-attachments/assets/9eab5426-dfc4-44ef-a782-314351de30a4" />
+<img width="596" height="732" alt="image" src="https://github.com/user-attachments/assets/01dd4b5c-c8cb-45d1-8fba-3076b1a1bbdf" />
 

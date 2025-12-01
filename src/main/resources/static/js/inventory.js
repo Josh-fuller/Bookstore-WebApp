@@ -184,6 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? `${description.slice(0, 60)}…`
                 : description;
 
+        const stock = book.inventory ?? 0;
+        const isOutOfStock = stock <= 0;
+
         tr.innerHTML = `
             <td>
                 <a href="#" class="text-decoration-none"
@@ -207,6 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${escapeHtml(book.bookGenre || "")}</td>
             <td>${priceText}</td>
             <td>${escapeHtml(shortDesc)}</td>
+            <td>${stock}</td>
             ${
             isAdmin
                 ? `
@@ -220,15 +224,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 : isLoggedIn
                     ? `
                 <td>
+                ${
+                    isOutOfStock
+                        ? `<span class="text-muted">Out of stock</span>`
+                        : `
                     <form method="post" action="/cart/add/${book.id}">
                         <button type="submit"
                                 class="btn btn-sm btn-primary">
                             Add to Cart
                         </button>
-                    </form>
+                    </form>`
+                    }
                 </td>`
                     : ""
-        }
+            }
         `;
 
         if (isAdmin) {
@@ -284,6 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p><strong>ISBN:</strong> <span>${escapeHtml(
             book.bookISBN || ""
         )}</span></p>
+        <p><strong>Inventory:</strong> <span>${book.inventory ?? 0}</span></p>                   
                             <hr>
                             <p>${escapeHtml(book.bookDescription || "")}</p>
                         </div>
@@ -353,6 +363,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const rawIsbn = fd.get("bookISBN") || "";
         const normalizedIsbn = rawIsbn.trim().replaceAll("-", "").replace(/\s+/g, "");
 
+        const rawInventory = fd.get("inventory");
+        const parsedInventory = rawInventory !== null ? parseInt(rawInventory, 10) : NaN;
+        const inventory = Number.isNaN(parsedInventory) ? 5 : parsedInventory;
+
+
         const bookPayload = {
             bookTitle: fd.get("bookTitle"),
             bookAuthor: fd.get("bookAuthor"),
@@ -363,7 +378,8 @@ document.addEventListener("DOMContentLoaded", () => {
             bookDescription: fd.get("bookDescription"),
             bookCoverURL: normalizedIsbn
                 ? `https://covers.openlibrary.org/b/isbn/${normalizedIsbn}-L.jpg`
-                : null
+                : null,
+            inventory: inventory
         };
 
         const res = await fetch(`/api/inventories/${inventoryId}/books`, {

@@ -210,7 +210,25 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${escapeHtml(book.bookGenre || "")}</td>
             <td>${priceText}</td>
             <td>${escapeHtml(shortDesc)}</td>
-            <td>${stock}</td>
+            <td>
+                ${stock}
+            
+                ${
+                        isAdmin
+                            ? `
+                            <span class="ms-2">
+                                <form method="post" action="/books/${book.id}/stock/inc" style="display:inline;">
+                                    <button class="btn btn-sm btn-success">+</button>
+                                </form>
+                                <form method="post" action="/books/${book.id}/stock/dec" style="display:inline;">
+                                    <button class="btn btn-sm btn-warning">−</button>
+                                </form>
+                            </span>
+                          `
+                            : ""
+                    }
+            </td>
+
             ${
             isAdmin
                 ? `

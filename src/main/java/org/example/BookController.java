@@ -164,6 +164,38 @@ public class BookController {
         return "inventory";
     }
 
+    @PostMapping("/books/{id}/stock/inc")
+    public String incrementStock(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        bookRepository.findById(id).ifPresent(book -> {
+            book.setInventory(book.getInventory() + 1);
+            bookRepository.save(book);
+        });
+
+        return "redirect:/";
+    }
+
+    @PostMapping("/books/{id}/stock/dec")
+    public String decrementStock(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.isAdmin()) {
+            return "redirect:/login";
+        }
+
+        bookRepository.findById(id).ifPresent(book -> {
+            int current = book.getInventory();
+            if (current > 0) {            // don’t go negative
+                book.setInventory(current - 1);
+                bookRepository.save(book);
+            }
+        });
+
+        return "redirect:/";
+    }
 
 
 

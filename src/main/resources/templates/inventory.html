@@ -134,7 +134,20 @@
                 <td th:text="${book.bookGenre}">Genre</td>
                 <td th:text="${'$' + #numbers.formatDecimal(book.bookPrice, 1, 2)}">$0.00</td>
                 <td th:text="${#strings.abbreviate(book.bookDescription, 60)}">Desc</td>
-                <td th:text="${book.inventory}">0</td>
+                <td>
+                    <span th:text="${book.inventory}"></span>
+
+                    <!-- Admin-only stock controls -->
+                    <span th:if="${isAdmin}" class="ms-2">
+                        <form th:action="@{/books/{id}/stock/inc(id=${book.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-sm btn-success">+</button>
+                        </form>
+                        <form th:action="@{/books/{id}/stock/dec(id=${book.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-sm btn-warning">−</button>
+                        </form>
+                     </span>
+                </td>
+
                 <td th:if="${isAdmin}">
                     <button type="button"
                             class="btn btn-sm btn-danger remove-book-btn"

@@ -2,6 +2,7 @@ package org.example;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -34,5 +35,8 @@ public interface BookRepository extends JpaRepository<BookInfo, Long> {
 
     // genre based recommendations
     List<BookInfo> findTop10ByBookGenresOrderByBookPriceDesc(String genre);
+
+    @Query("SELECT b FROM BookInfo b WHERE b.bookGenres LIKE %:genre% ORDER BY b.bookPrice DESC")
+    List<BookInfo> findBooksByGenreContains(@Param("genre") String genre);
 
 }

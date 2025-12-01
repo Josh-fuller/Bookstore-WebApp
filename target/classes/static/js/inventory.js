@@ -91,8 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (maxPrice !== null && !Number.isNaN(rowPrice) && rowPrice > maxPrice) {
                 visible = false;
             }
-            if (selectedGenre && rowGenre !== selectedGenre) {
-                visible = false;
+            if (selectedGenre) {
+                const genres = rowGenre.split(",").map(g => g.trim().toLowerCase());
+                const match = genres.includes(selectedGenre.toLowerCase());
+                if (!match) visible = false;
             }
 
             row.style.display = visible ? "" : "none";

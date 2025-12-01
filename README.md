@@ -11,6 +11,9 @@ The current implementation allows users to:
 - Login as an administrator or customer
 - As a customer you can add/remove books from your cart and view your cart.
 - Filter search for books by field
+- As an an administrator you can edit the stock of books.
+- You cannot add a book with no stock, and even if you could you can't checkout a book with empty stock.
+- View purchase history. 
 
 Features Implemented:
 - Thymeleaf front-end template
@@ -19,13 +22,11 @@ Features Implemented:
 - H2 Database (file-based, not in-memory) — data persists between runs
 - Automatically updates the table after each add/remove via full page reload
 - Project deployment on Azure
-
-Milestone 3 feature plans:
 - Show book reccomendations based on Jaccard distances
 - Ability to view purchase history and get reccomendations based on past purchases
-- Seperate pages for book details
 - Actual per-book inventories
-- Comparing user-purchases
+- Live filtering
+  
 
 UML Diagram:
 <img width="1209" height="913" alt="image" src="https://github.com/user-attachments/assets/492eda61-eb47-4d32-9819-aac92a97a289" />

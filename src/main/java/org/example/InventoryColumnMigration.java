@@ -1,7 +1,7 @@
 package org.example;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -22,17 +22,22 @@ public class InventoryColumnMigration implements CommandLineRunner {
         try (Connection c = dataSource.getConnection();
              Statement s = c.createStatement()) {
 
-            // Try to add the column; if it exists, catch and ignore
             try {
-                s.executeUpdate("ALTER TABLE book_info ADD COLUMN inventory INT DEFAULT 5 NOT NULL");
+                s.executeUpdate(
+                        "ALTER TABLE book_info " +
+                                "ADD COLUMN inventory INT DEFAULT 5 NOT NULL"
+                );
                 System.out.println("✅ Added inventory column to book_info.");
             } catch (SQLException ex) {
-                String msg = ex.getMessage();
-                if (msg != null && msg.toLowerCase().contains("already")
-                        && msg.toLowerCase().contains("exist")) {
+                int code = ex.getErrorCode();
+                String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
+
+                // H2 uses 42121 for "duplicate column name"
+                if (code == 42121 || msg.contains("duplicate column")) {
                     System.out.println("ℹ️ inventory column already exists, skipping migration.");
                 } else {
-                    throw ex; // unexpected, rethrow
+                    // anything unexpected: fail fast
+                    throw ex;
                 }
             }
         }

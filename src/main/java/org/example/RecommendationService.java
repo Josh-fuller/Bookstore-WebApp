@@ -17,7 +17,7 @@ public class RecommendationService {
 
     public List<BookInfo> getRecommendations(User user, int limit) {
 
-        System.out.println("=== RecommendationService.getRecommendations ===");
+        System.out.println("RecommendationService.getRecommendations");
         System.out.println("User: " + (user == null ? "NULL" : user.getUsername()));
         System.out.println("Limit: " + limit);
 
@@ -74,7 +74,7 @@ public class RecommendationService {
         // go through each genre and pick books
         for (String genre : sortedGenres) {
 
-            System.out.println("---- Checking genre: " + genre);
+            System.out.println("Checking genre: " + genre);
 
             List<BookInfo> booksInGenre = bookRepo.findBooksByGenreContains(genre);
 
@@ -90,7 +90,7 @@ public class RecommendationService {
 
                 if (!alreadyHas) {
                     recommended.add(b);
-                    System.out.println("   → Added to recommendations");
+                    System.out.println("Added to recommendations");
 
                     if (recommended.size() >= limit) {
                         System.out.println("Reached limit (" + limit + ")");
@@ -102,7 +102,7 @@ public class RecommendationService {
             if (recommended.size() >= limit) break;
         }
 
-        System.out.println("=== Final Recommendations ===");
+        System.out.println("Final Recommendations ===");
         System.out.println(recommended);
 
         return recommended;

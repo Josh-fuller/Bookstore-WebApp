@@ -23,6 +23,10 @@ public class BookInfo {
     private String bookDescription;
 
     private Double bookPrice;
+    private int inventory = 5; //Added a default value to update the db
+    @Column(length = 2000)
+    private String bookCategory;
+    @Column(length = 2000)
     private String bookCoverURL; // full URL or relative filename
 
     // Constructors
@@ -66,6 +70,8 @@ public class BookInfo {
         return bookCoverURL;
     }
     public Long getId(){ return id; }
+    public int getInventory() {return inventory;}
+
 
     //ALL setters IDK if well need them
     public void setBookISBN(String bookISBN){
@@ -90,5 +96,10 @@ public class BookInfo {
     public void setBookCoverURL(String bookCoverURL){
         this.bookCoverURL = bookCoverURL;
     }
+    public void setInventory(int inventory) {this.inventory = inventory;}
+
+
+    public boolean hasStock(int quantity) {return inventory >= quantity;}
+    public void decreaseStock(int quantity) {this.inventory -= quantity;}
 
 }
